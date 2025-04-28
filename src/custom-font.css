@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-montserrat;
+  }
+  label {
+    @apply font-semibold;
+  }
+  ::placeholder {
+    @apply font-normal;
+  }
+}
