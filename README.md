@@ -1,3 +1,4 @@
+HEAD
 # React-Vite-TailwindCSS Starter Template
 
 Kickstart your next project with this starter template, equipped with React, Tailwind CSS, and Vite for a seamless and modern development experience.
@@ -40,3 +41,7 @@ Feel free to submit issues and enhancement requests, or open pull requests to ma
 
 
 
+
+# skillitgh-lms-frontend
+ Frontend cofre application for the SkillItGH LMS Platform, built with React.js and TailwindCSS. Users can register for courses or workshops, access their dashboard, and explore past events.
+8c298a58a1a9ee3667d9de5c6fc4510cc5b42b9c
