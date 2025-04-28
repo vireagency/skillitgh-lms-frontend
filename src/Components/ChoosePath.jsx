@@ -26,7 +26,7 @@ export default function ChoosePath() {
             {paths.map((path) => (
                 <div
                 key={path.title}
-                onClick={() => navigate(path.route)}
+                onClick={() => navigate("/registration-success", { state: { courses: ["Graphic Design", "Web Development", "UI/UX Design"]}})}
                 className="bg-orange-50 hover:bg-[#08C76A] transition-all duration-300 cursor-pointer rounded-xl p-8 w-64 flex flex-col items-center shadow-md group"
                 >
                     <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow">

@@ -34,7 +34,7 @@ const ChooseCourse = () => {
                     >
                         <option value="Graphic Design">Graphic Design</option>
                         <option value="Web Development">Web Development</option>
-                        <option value="Digital Marketing">Digital Marketing</option>
+                        <option value="UI/UX Design">UI/UX Design</option>
                     </select>
 
                     <label className="text-left mb-2" htmlFor="reason">Reason for choosing {selectedCourse}:</label>
