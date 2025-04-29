@@ -1,9 +1,9 @@
-import SignIn from "./Components/SignIn";
-import SignUp from "./Components/SignUp";
-import ChoosePath from "./Components/ChoosePath";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/signup2";
+import ChoosePath from "./pages/ChoosePath";
 import { Routes, Route, Navigate } from 'react-router-dom';
-import ChooseCourse from "./Components/ChooseCourse";
-import RegistrationSuccess from "./Components/RegistrationSuccess";
+import ChooseCourse from "./pages/ChooseCourse";
+import RegistrationSuccess from "./pages/RegistrationSuccess";
 
 
 const App = () => {

@@ -1,4 +1,3 @@
-// src/components/ChooseCourse.jsx
 import React, { useState } from 'react';
 import "../index.css";
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +12,9 @@ const ChooseCourse = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
+        console.log("Selected Course:", selectedCourse);
+        console.log("Reason:", reason);
         // Redirect to success page with selected courses
         history.push({
             pathname: '/registrationsuccess',
@@ -21,8 +23,8 @@ const ChooseCourse = () => {
     };
 
     return (
-        <div className="flex items-center justify-center h-screen bg-sky-100">
-            <div className="bg-white p-12 rounded-3xl shadow-xl text-center aspect-auto">
+        <div className="flex items-center justify-center h-screen my-bg">
+            <div className="bg-white p-12 rounded-3xl shadow-xl text-center w-[35%] max-w-full">
                 <h1 className="text-3xl font-semibold text-gray-700 mb-10">Choose a Course</h1>
                 <form onSubmit={handleSubmit} className="flex flex-col">
                     <label className="text-left mb-2 font-normal font-montserrat" htmlFor="course-select">Select Course:</label>
@@ -35,6 +37,7 @@ const ChooseCourse = () => {
                         <option value="Graphic Design">Graphic Design</option>
                         <option value="Web Development">Web Development</option>
                         <option value="UI/UX Design">UI/UX Design</option>
+                        <option value="Microsoft Office">Microsoft Office</option>
                     </select>
 
                     <label className="text-left mb-2" htmlFor="reason">Reason for choosing {selectedCourse}:</label>
