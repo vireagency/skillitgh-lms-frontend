@@ -12,8 +12,8 @@ const RegistrationSuccess = () => {
                 <img src="/image 7.png" alt="Success" className="w-20 h-20 mx-auto mb-4" />
                 </div>
                 <h1 className="text-xl font-semibold mb-2">Congratulations!</h1>
-                <p>You have successfully registered</p><p> for SkillitGh Graphic Design</p><p> course </p>
-                <button className="bg-green-500 text-white py-2 w-full px-4 mt-3.5 rounded-full hover:bg-green-600">
+                <div className='place-items-stretch'><p>You have successfully registered</p><p> for SkillitGh Graphic Design</p><p className='mb-20'> course </p></div>
+                <button className="bg-green-500 text-white py-2 w-full px-4 mt-10 rounded-full hover:bg-green-600">
                     Dashboard
                 </button>
             </div>

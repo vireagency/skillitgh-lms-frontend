@@ -10,6 +10,7 @@ import WorkshopsPage from "./pages/WorkshopsPage";
 import "./index.css";
 import React from "react";
 import DashboardLayout from "./routes/dashboard/_dashboardLayout";
+import CoursesDashboard from "./pages/CoursesDashboard";
 
 
 const App = () => {
@@ -22,6 +23,8 @@ const App = () => {
       <Route path="/dashboard/*" element={<DashboardLayout />}> 
 
       <Route path="workshops" element={<WorkshopsPage />} />
+      
+      <Route path="courses-dashboard" element={<CoursesDashboard />} />
       </Route>
 
       {/*course path*/}
