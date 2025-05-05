@@ -15,12 +15,12 @@ const ChooseCourse = () => {
         
         console.log("Selected Course:", selectedCourse);
         console.log("Reason:", reason);
-        // Redirect to success page with selected courses
-        history.push({
-            pathname: '/registrationsuccess',
+    
+        navigate('/registrationsuccess', {
             state: { courses: selectedCourse, reason: reason }
         });
     };
+    
 
     return (
         <div className="flex items-center justify-center h-screen my-bg">
@@ -50,9 +50,10 @@ const ChooseCourse = () => {
                         rows={4}
                     />
 
-                    <button onClick={() => navigate(path.route)} type="submit" className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
+                    <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
                         Submit
                     </button>
+
                 </form>
             </div>
         </div>

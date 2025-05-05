@@ -38,26 +38,32 @@ export function Sidebar() {
 
 import React from "react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "./ui/sidebar";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Home, BookOpen, Anvil } from "lucide-react";
 
 
 export function AppSidebar() {
+  const location = useLocation();
+
+  const menu = [
+    { label: "Workshops", icon: <Anvil className="mr-2 h-5 w-5" />, path: "/dashboard/workshops" },
+    { label: "Courses", icon: <BookOpen className="mr-2 h-5 w-5" />, path: "/dashboard/courses-dashboard" },
+  ];
   return (
     <Sidebar className="h-screen w-64 bg-[#F6F8F9] text-gray-500 flex flex-col p-4">
       <SidebarHeader className="text-2xl font-bold mb-8">
         <img src="/image 45.png" alt="sidebar image" />
       </SidebarHeader>
       <SidebarContent className="flex flex-col space-y-4">
-      <Link to="/dasboard/workshops" className="flex items-center space-x-2">
-          <Button variant="ghost" className="justify-start flex-1  hover:bg-[#C2FFE1] hover:text-[#08C76A]">
+      <Link to="/dashboard/workshops" className="flex items-center space-x-2">
+          <Button variant="ghost" className="justify-start flex-1  active:bg-[#C2FFE1] active:text-[#08C76A]">
             <Anvil className="mr-2 h-5 w-5 " />
             Workshops
           </Button>
         </Link>
         <Link to="/dashboard/courses-dashboard" className="flex items-center space-x-2">
-          <Button variant="ghost" className="justify-start flex-1  hover:bg-[#C2FFE1] hover:text-[#08C76A]">
+          <Button variant="ghost" className="justify-start flex-1  active:bg-[#C2FFE1] active:text-[#08C76A]">
             <BookOpen className="mr-2 h-5 w-5" />
             Courses
           </Button>
