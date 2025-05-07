@@ -16,7 +16,7 @@ export default function ChoosePath() {
     {
       title: "Workshop Registration",
       icon: "/image 3.png", 
-      route: "/workshops",
+      route: "/dashboard/workshops",
       state: null,
     },
   ];

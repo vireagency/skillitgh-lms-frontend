@@ -9,7 +9,7 @@ const RegistrationSuccess = () => {
 
     const navigate = useNavigate();
     const handleSubmit = () => {
-        navigate('/dashboard/workshops'); // Navigate to the dashboard or any other route
+        navigate('/dashboard/courses-dashboard'); // Navigate to the dashboard or any other route
     };
 
     return (

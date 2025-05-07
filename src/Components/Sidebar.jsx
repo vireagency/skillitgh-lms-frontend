@@ -1,78 +1,53 @@
-/*import Button from "./Button";
-import { Home, BookOpen, ClipboardList, User } from "lucide-react";
-import { Link } from "react-router-dom";
-
-export function Sidebar() {
-  return (
-    <aside className="h-screen w-64 bg-gray-900 text-white flex flex-col p-4">
-      <div className="text-2xl font-bold mb-8"><img src="./image 45.png" alt="sidebar image" /></div>
-      <nav className="flex flex-col space-y-4">
-        <Link to="/" className="flex items-center space-x-2">
-          <Button variant="ghost" className="justify-start flex-1">
-            <Home className="mr-2 h-5 w-5" />
-            Workshops
-          </Button>
-        </Link>
-        <Link to="/courses" className="flex items-center space-x-2">
-          <Button variant="ghost" className="justify-start flex-1">
-            <BookOpen className="mr-2 h-5 w-5" />
-            Courses
-          </Button>
-        </Link>
-        <Link to="/assignments" className="flex items-center space-x-2">
-          <Button variant="ghost" className="justify-start flex-1">
-            <ClipboardList className="mr-2 h-5 w-5" />
-            Profile
-          </Button>
-        </Link>
-        <Link to="/profile" className="flex items-center space-x-2">
-          <Button variant="ghost" className="justify-start flex-1">
-            <User className="mr-2 h-5 w-5" />
-            Sign Out
-          </Button>
-        </Link>
-      </nav>
-    </aside>
-  );
-}*/
-
-import React from "react";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "./ui/sidebar";
-import { Link, useLocation } from "react-router-dom";
-import { Button } from "./ui/button";
-import { Home, BookOpen, Anvil } from "lucide-react";
-
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "./ui/sidebar"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Button } from "./ui/button"
+import { BookOpen, Anvil, LogOut, User } from "lucide-react"
 
 export function AppSidebar() {
-  const location = useLocation();
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to sign out?");
+    if (confirmed) {
+      localStorage.removeItem("token");
+      navigate("/signin");
+    }
+  };
+  
 
   const menu = [
-    { label: "Workshops", icon: <Anvil className="mr-2 h-5 w-5" />, path: "/dashboard/workshops" },
-    { label: "Courses", icon: <BookOpen className="mr-2 h-5 w-5" />, path: "/dashboard/courses-dashboard" },
+    { type: "link", label: "Workshops", icon: <Anvil className="mr-2 h-5 w-5" />, path: "/dashboard/workshops" },
+    { type: "link", label: "Courses", icon: <BookOpen className="mr-2 h-5 w-5" />, path: "/dashboard/courses-dashboard" },
+    { type: "link", label: "Profile", icon: <User className="mr-2 h-5 w-5" />, path: "/dashboard/profile" },
+    { type: "action", label: "Sign out", icon: <LogOut className="mr-2 h-5 w-5" />, action: handleLogout },
   ];
+  
   return (
-    <Sidebar className="h-screen w-64 bg-[#F6F8F9] text-gray-500 flex flex-col p-4">
-      <SidebarHeader className="text-2xl font-bold mb-8">
-        <img src="/image 45.png" alt="sidebar image" />
+    <Sidebar collapsible="icon" className="h-screen bg-[#F6F8F9] text-gray-500">
+      <SidebarHeader className="text-2xl font-bold p-4">
+        <img src="/Layer1.png" alt="sidebar image" className="h-[75%] w-[60%]" />
       </SidebarHeader>
-      <SidebarContent className="flex flex-col space-y-4">
-      <Link to="/dashboard/workshops" className="flex items-center space-x-2">
-          <Button variant="ghost" className="justify-start flex-1  active:bg-[#C2FFE1] active:text-[#08C76A]">
-            <Anvil className="mr-2 h-5 w-5 " />
-            Workshops
-          </Button>
-        </Link>
-        <Link to="/dashboard/courses-dashboard" className="flex items-center space-x-2">
-          <Button variant="ghost" className="justify-start flex-1  active:bg-[#C2FFE1] active:text-[#08C76A]">
-            <BookOpen className="mr-2 h-5 w-5" />
-            Courses
-          </Button>
-        </Link>
+      <SidebarContent className="flex flex-col space-y-4 p-2">
+        {menu.map((item) => (
+          <div key={item.label} className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              className="justify-start flex-1 active:bg-[#C2FFE1] active:text-[#08C76A]"
+              tooltip={item.label}
+              onClick={() => item.type === "action" ? item.action() : navigate(item.path)}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </Button>
+          </div>
+        ))}
+
       </SidebarContent>
       <SidebarFooter className="text-center mt-auto" />
-      <SidebarRail className="flex items-center justify-center h-full" />
+      <SidebarRail />
     </Sidebar>
-  );
+  )
 }
 
-export default AppSidebar;
+export default AppSidebar

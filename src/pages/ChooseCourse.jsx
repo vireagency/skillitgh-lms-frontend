@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import "../index.css";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const ChooseCourse = () => {
     const navigate = useNavigate();
@@ -10,8 +12,13 @@ const ChooseCourse = () => {
     const [selectedCourse, setSelectedCourse] = useState('Graphic Design');
     const [reason, setReason] = useState('');
 
+    /*
     const handleSubmit = (e) => {
         e.preventDefault();
+        axios.post('https://skillitgh-lms.onrender.com/api/v1/courses/register', {
+            course: selectedCourse,
+            reason: reason
+        })
         
         console.log("Selected Course:", selectedCourse);
         console.log("Reason:", reason);
@@ -19,7 +26,42 @@ const ChooseCourse = () => {
         navigate('/registrationsuccess', {
             state: { courses: selectedCourse, reason: reason }
         });
+    };*/
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        const token = localStorage.getItem("token");
+        if (!token) {
+            toast("Please sign in first.");
+            return;
+        }
+    
+        try {
+            const response = await axios.post(
+                'https://skillitgh-lms.onrender.com/api/v1/courses/register',
+                {
+                    courseTitle: selectedCourse,
+                    messageBody: reason
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+    
+            console.log("Registration success:", response.data);
+    
+            navigate('/registrationsuccess', {
+                state: { courses: selectedCourse, reason: reason }
+            });
+        } catch (error) {
+            console.error("Registration error:", error);
+            toast(error.response?.data?.message || "Failed to register.");
+        }
     };
+    
     
 
     return (
@@ -50,7 +92,7 @@ const ChooseCourse = () => {
                         rows={4}
                     />
 
-                    <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
+                    <button type="submit" onClick={handleSubmit} className="bg-green-500 text-white py-2 px-4 rounded-full hover:bg-green-600">
                         Submit
                     </button>
 

@@ -8,6 +8,7 @@ import "../index.css";
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
   const {
       register,
       handleSubmit,
@@ -16,29 +17,36 @@ export default function SignIn() {
 
  
     const onSubmit = async (data) => {
+      setErrorMessage("");
       try {
+        const res = await axios.post(
+          "https://skillitgh-lms.onrender.com/api/v1/auth/signin",
+          data,
+          { timeout: 5000 }
+        );
   
-        const response = await axios.post("https://skillitgh-lms.onrender.com/api/v1/auth/signin", data, { timeout: 5000 });
+        const { token } = res.data;
+  
+        if (token) {
+          localStorage.setItem("token", token);
+          toast.success("Successfully logged in!", { autoClose: 2000 });
+          /*setTimeout(() => navigate("/choosepath"), 2500);*/
+          const hasChosenPath = res.data.user?.hasChosenPath;
+          setTimeout(() => { if (hasChosenPath) { 
+            localStorage.setItem("hasChosenPath", true);
             
-        toast.success("Successfully logged in!", {
-          position: "top-right",
-          autoClose: 2000,
-        });
-  
-        console.log("Response:", response.data);
-        console.log("formData:", data);
-  
-        setTimeout(() => {navigate("/choosepath");}, 2500); 
-  
+          navigate("/dashboard/courses-dashboard");
+         } else { 
+          navigate("/choosepath"); } }, 2500);
+        }
       } catch (error) {
-        const msg =
-          error.response?.data?.message || "An error occurred. Try again.";
-        toast.error(msg, {
-          position: "top-right",
-          autoClose: 2000,
-        });
+        const msg = error.response?.data?.message || "An error occurred. Try again.";
+        setErrorMessage(msg);
+        console.error("Error during sign-in:", error);
+        toast.error(msg, { autoClose: 2000 });
       }
     };
+    
 
   return (
     <div className="flex flex-col md:flex-row w-screen h-screen">
@@ -96,7 +104,7 @@ export default function SignIn() {
 
           <p className="text-sm mt-6">
             Don't have an account?
-            <Link to="/signup" className="text-blue-600 ml-1 underline">
+            <Link to="/" className="text-blue-600 ml-1 underline">
               Register
             </Link>
           </p>

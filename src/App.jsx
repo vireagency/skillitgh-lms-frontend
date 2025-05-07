@@ -11,6 +11,8 @@ import "./index.css";
 import React from "react";
 import DashboardLayout from "./routes/dashboard/_dashboardLayout";
 import CoursesDashboard from "./pages/CoursesDashboard";
+import ProtectedRoute from "./Components/ProtectedRoute";
+import ProfilePage from "./pages/ProfilePage";
 
 
 const App = () => {
@@ -18,14 +20,34 @@ const App = () => {
     <Routes>
       <Route path="/" element={<SignUp />} />
       <Route path="/signin" element={<SignIn />} />
-      <Route path="/choosepath" element={<ChoosePath />} />
-
-      <Route path="/dashboard/*" element={<DashboardLayout />}> 
-
-      <Route path="workshops" element={<WorkshopsPage />} />
       
-      <Route path="courses-dashboard" element={<CoursesDashboard />} />
+      {/* ✅ Protected Routes Start */}
+      <Route
+        path="/choosepath"
+        element={
+          localStorage.getItem("hasChosenPath") === 'true' ? (
+            <Navigate to="/dashboard/courses-dashboard" replace />
+          ) : (
+          <ProtectedRoute>
+            <ChoosePath />
+          </ProtectedRoute>
+          )
+        }
+      />
+
+      <Route
+        path="/dashboard/*"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="workshops" element={<WorkshopsPage />} />
+        <Route path="courses-dashboard" element={<CoursesDashboard />} />
+        <Route path="profile" element={<ProfilePage />} />
       </Route>
+      {/* ✅ Protected Routes End */}
 
       {/*course path*/}
       <Route path="/courses" element={<ChooseCourse />} />
