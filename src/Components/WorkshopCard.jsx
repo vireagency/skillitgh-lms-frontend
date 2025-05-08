@@ -6,9 +6,13 @@ import React from "react";
 const WorkshopCard = ({ title, date, status, image, description, onClick, view, isRegistered }) => {
   const clickable = view === "upcoming";
 
+
   return (
-    <div className={`border rounded-lg overflow-hidden shadow-md cursor-${clickable ? "pointer" : "default"} transition duration-200 hover:shadow-lg`}
-      onClick={clickable ? onClick : null}
+    <div 
+    className={`border rounded-lg overflow-hidden shadow-md cursor-${
+      clickable ? "pointer" : "default"
+    } transition duration-200 hover:shadow-lg`}
+    onClick={clickable ? onClick : null}
     >
       <img
         src={image}
@@ -17,11 +21,18 @@ const WorkshopCard = ({ title, date, status, image, description, onClick, view, 
       />
       <div className="p-4">
         <h2 className="text-lg font-bold text-gray-800 mb-2">{title}</h2>
-        <p className="text-sm text-gray-500 mb-2">{date}  <strong>&bull; {status}</strong>
-        {isRegistered !== undefined && (
-          <small className={`${isRegistered ? "text-green-500" : "text-green-700"}`}>
-            &bull; {isRegistered ? "Registered" : "Register"}
-          </small>)}
+        <p className="text-sm text-gray-500 mb-2">
+          {date} <strong>&bull; {status}</strong>{" "}
+          {isRegistered ? (
+            <p className="text-green-600 font-medium">You're registered</p>
+          ) : (
+            <button
+              onClick={() => handleRegister(workshop._id)}
+              className="bg-blue-600 text-white px-4 py-2 rounded mt-2"
+            >
+              Register
+            </button>
+          )}
         </p>{/*
         </p>{/*
         <p className="text-sm text-gray-500">{facilitator}</p>

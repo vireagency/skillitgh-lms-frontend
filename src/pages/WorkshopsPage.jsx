@@ -115,6 +115,10 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
 const WorkshopsPage = () => {
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const currentUserId = currentUser?._id;
+  //const isRegistered = workshop.attendees.includes(currentUserId);
+
   const [workshops, setWorkshops] = useState([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState("upcoming"); 
@@ -223,7 +227,9 @@ const WorkshopsPage = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {Array.isArray(workshops) &&
-          workshops.map((workshop) => (
+          workshops.map((workshop) => {
+            //const isRegistered = workshop.attendees.include(currentUser._id); // Check if the user is registered for the workshop
+            return (
             <WorkshopCard
               key={workshop._id}
               title={workshop.title}
@@ -239,8 +245,8 @@ const WorkshopsPage = () => {
                   setSelectedWorkshop(workshop);
                 }
               }}
-            />
-        ))}
+            />);
+          })}
         {selectedWorkshop && view === "upcoming" && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-3xl border-2 border-green-500 p-6 w-[90%] max-w-md relative">
@@ -272,7 +278,7 @@ const WorkshopsPage = () => {
                     )
                     .then((response) => {
                       toast.success(response.data.message || "Registration successful!");
-
+                      console.log(workshops);
                       setWorkshops((prevWorkshops) =>
                         prevWorkshops.map((workshop) =>
                           workshop._id === selectedWorkshop._id
