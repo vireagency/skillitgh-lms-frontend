@@ -97,12 +97,24 @@ const SignUp = () => {
             <div>
               <label className="text-sm font-medium text-gray-700">Your Password</label>
               <input
-                {...register("password", { required: true })}
+                {...register("password", {
+                  required: true,
+                  pattern: {
+                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,}$/,
+                    message: "Password must be at least 6 characters, include upper & lower case letters, and a symbol."
+                  }
+                })}
+                
                 type="password"
                 placeholder="********"
                 className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2"
               />
-              {errors.password && <span className="text-red-500 text-sm">Password is required</span>}
+              {errors.password && (
+                <span className="text-red-500 text-sm">
+                  {errors.password.message || "Password is required"}
+                </span>
+              )}
+
             </div>
 
             <div>

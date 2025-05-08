@@ -122,15 +122,15 @@ const WorkshopsPage = () => {
   const [status, setStatus] = useState("Upcoming");
   const [selectedWorkshop, setSelectedWorkshop] = useState(null); 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+ 
 
+  // const openModal = (workshop) => {
+  //   setSelectedWorkshop(workshop);
+  // };
 
-  const openModal = (workshop) => {
-    setSelectedWorkshop(workshop);
-  };
-
-  const closeModal = () => {
-    setSelectedWorkshop(null);
-  };
+  // const closeModal = () => {
+  //   setSelectedWorkshop(null);
+  // };
 
   const fetchWorkshops = () => {
     setLoading(true);
@@ -233,14 +233,19 @@ const WorkshopsPage = () => {
               description={workshop.description}
               id={workshop._id}
               view={view}
-              onClick={() => view === "upcoming" && setSelectedWorkshop(workshop)}
+              isRegistered={view === "upcoming" ? workshop.isRegistered : undefined}
+              onClick={() => {
+                if (view === "upcoming" && !workshop.isRegistered) {
+                  setSelectedWorkshop(workshop);
+                }
+              }}
             />
         ))}
         {selectedWorkshop && view === "upcoming" && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-[90%] max-w-md relative">
+            <div className="bg-white rounded-3xl border-2 border-green-500 p-6 w-[90%] max-w-md relative">
               <button
-                className="absolute top-2 right-4 text-gray-500 hover:text-gray-800"
+                className="absolute top-2 left-4 text-3xl text-gray-500 hover:text-gray-800"
                 onClick={() => setSelectedWorkshop(null)}
               >
                 &times;
@@ -248,7 +253,7 @@ const WorkshopsPage = () => {
               <img
                 src={selectedWorkshop.workshopImage}
                 alt="Workshop"
-                className="w-full h-40 object-cover rounded mb-4"
+                className="w-full h-40 object-cover rounded-xl mb-4"
               />
               <h2 className="text-xl font-semibold mb-2">{selectedWorkshop.title}</h2>
               <p className="text-sm text-gray-700 mb-4">{selectedWorkshop.description}</p>
@@ -267,15 +272,28 @@ const WorkshopsPage = () => {
                     )
                     .then((response) => {
                       toast.success(response.data.message || "Registration successful!");
+
+                      setWorkshops((prevWorkshops) =>
+                        prevWorkshops.map((workshop) =>
+                          workshop._id === selectedWorkshop._id
+                            ? { ...workshop, isRegistered: true }
+                            : workshop
+                        )
+                      );                   
+
+                      setShowSuccessModal(true);
+                      setTimeout(() => {
+                        setSelectedWorkshop(null);
+                        setShowSuccessModal(false);
+                      }, 3000); 
                     })
                     .catch((err) => {
                       const backendMessage = err.response?.data?.message || "Registration failed.";
                       toast.error(backendMessage);
                       console.error(err);
                     });
-                  setSelectedWorkshop(null);
-                  setShowSuccessModal(true);
-                }}
+                    
+                  }}
               >
                 Register
               </button>
@@ -283,19 +301,19 @@ const WorkshopsPage = () => {
           </div>
         )}
 
-        {showSuccessModal && (
+        {showSuccessModal &&  (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-[90%] max-w-md relative text-center">
+            <div className="bg-white rounded-3xl border-2 border-green-500 p-6 w-[90%] max-w-md h-[50%] relative text-center">
               <button
                 className="absolute top-3 right-4 text-gray-500 hover:text-gray-800"
                 onClick={() => setShowSuccessModal(false)}
               >
                 &times;
               </button>
-              <div className="text-4xl mb-2">🎉</div> {/* or use an image/icon */}
+              <div className="text-2xl mb-2"><img src="/image 8.svg" alt="congratulations" /></div> 
               <h2 className="text-xl font-semibold mb-2">Congratulations!</h2>
               <p className="text-sm text-gray-700">
-                You have successfully registered for <strong>{selectedWorkshop?.title}</strong>.
+                You have successfully registered for <strong>{selectedWorkshop.title}</strong>.
               </p>
               <p className="text-sm text-gray-500 mt-2">Stay tuned</p>
             </div>

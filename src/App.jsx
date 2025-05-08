@@ -25,13 +25,13 @@ const App = () => {
       <Route
         path="/choosepath"
         element={
-          localStorage.getItem("hasChosenPath") === 'true' ? (
-            <Navigate to="/dashboard/courses-dashboard" replace />
-          ) : (
+          // localStorage.getItem("hasChosenPath") === 'true' ? (
+          //   <Navigate to="/dashboard/courses-dashboard" replace />
+          // ) : (
           <ProtectedRoute>
             <ChoosePath />
           </ProtectedRoute>
-          )
+          //)
         }
       />
 

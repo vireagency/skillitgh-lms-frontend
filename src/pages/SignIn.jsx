@@ -34,7 +34,6 @@ export default function SignIn() {
           const hasChosenPath = res.data.user?.hasChosenPath;
           setTimeout(() => { if (hasChosenPath) { 
             localStorage.setItem("hasChosenPath", true);
-            
           navigate("/dashboard/courses-dashboard");
          } else { 
           navigate("/choosepath"); } }, 2500);

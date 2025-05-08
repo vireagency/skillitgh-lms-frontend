@@ -3,7 +3,7 @@ import React from "react";
 //import { Card } from "./ui/card";
 //import { CardHeader, CardTitle, CardContent, CardFooter } from "./ui/card";
 
-const WorkshopCard = ({ title, date, status, image, description, onClick, view }) => {
+const WorkshopCard = ({ title, date, status, image, description, onClick, view, isRegistered }) => {
   const clickable = view === "upcoming";
 
   return (
@@ -17,7 +17,13 @@ const WorkshopCard = ({ title, date, status, image, description, onClick, view }
       />
       <div className="p-4">
         <h2 className="text-lg font-bold text-gray-800 mb-2">{title}</h2>
-        <p className="text-sm text-gray-500 mb-2">{date}  <strong>&bull; {status}</strong></p>{/*
+        <p className="text-sm text-gray-500 mb-2">{date}  <strong>&bull; {status}</strong>
+        {isRegistered !== undefined && (
+          <small className={`${isRegistered ? "text-green-500" : "text-green-700"}`}>
+            &bull; {isRegistered ? "Registered" : "Register"}
+          </small>)}
+        </p>{/*
+        </p>{/*
         <p className="text-sm text-gray-500">{facilitator}</p>
         <p className="text-sm text-gray-500">{location}</p>*/}
         <p className="text-sm text-gray-500">{description}</p>

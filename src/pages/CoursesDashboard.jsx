@@ -132,15 +132,15 @@ const CoursesDashboard = () => {
           ))}
           {selectedCourse && view === "other" && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-[90%] max-w-md relative">
+            <div className="bg-white rounded-3xl border-2 border-green-500 p-6 w-[90%] max-w-md relative">
               <button
-                className="absolute top-2 right-4 text-gray-500 hover:text-gray-800"
+                className="absolute top-2 left-4 text-3xl text-gray-500 hover:text-gray-800"
                 onClick={() => setSelectedCourse(null)}
               >
                 &times;
               </button>
               <img
-                src={selectedCourse.image}
+                src={selectedCourse.courseImage}
                 alt="Course"
                 className="w-full h-40 object-cover rounded mb-4"
               />
@@ -161,14 +161,25 @@ const CoursesDashboard = () => {
                     )
                     .then((response) => {
                       toast.success(response.data.message || "Registration successful!");
+
+                      setCourses((prevCourses) =>
+                        prevCourses.filter((course) => course._id !== selectedCourse._id)
+                      );
+                      setShowSuccessModal(true);
+                      setTimeout(() => {
+                         setSelectedCourse(null);
+                        setShowSuccessModal(false);
+                      }, 3000); // Close the modal after 3 seconds
+                      setTimeout(() => {setView("enrolled");}, 3100); // Refresh the courses after 3 seconds
                     })
                     .catch((err) => {
                       const backendMessage = err.response?.data?.message || "Registration failed.";
                       toast.error(backendMessage);
                       console.error(err);
                     });
-                  setSelectedCourse(null);
-                  setShowSuccessModal(true);
+                    
+                 
+                  
                 }}
               >
                 Register
@@ -178,14 +189,14 @@ const CoursesDashboard = () => {
         )}
         {showSuccessModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-[90%] max-w-md relative text-center">
+            <div className="bg-white rounded-3xl p-6 w-[90%] max-w-md h-[50%] relative text-center">
               <button
                 className="absolute top-3 right-4 text-gray-500 hover:text-gray-800"
                 onClick={() => setShowSuccessModal(false)}
               >
                 &times;
               </button>
-              <div className="text-4xl mb-2">🎉</div> {/* or use an image/icon */}
+              <div className="text-2xl mb-2"><img src="/image 8.svg" alt="congrats" /></div> 
               <h2 className="text-xl font-semibold mb-2">Congratulations!</h2>
               <p className="text-sm text-gray-700">
                 You have successfully registered for <strong>{selectedCourse?.title}</strong>.
