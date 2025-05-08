@@ -26,7 +26,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="h-screen bg-[#F6F8F9] text-gray-500">
       <SidebarHeader className="text-2xl font-bold p-4">
-        <img src="/Layer1.png" alt="sidebar image" className="h-[75%] w-[60%]" />
+        <img src="/Layer1.png" alt="sidebar image" className="h-auto w-28" />
       </SidebarHeader>
       <SidebarContent className="flex flex-col space-y-4 p-2">
         {menu.map((item) => (

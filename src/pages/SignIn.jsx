@@ -5,10 +5,14 @@ import "react-toastify/dist/ReactToastify.css";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import "../index.css";
+import { Eye, EyeOff } from 'lucide-react';
+
 
 export default function SignIn() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
       register,
       handleSubmit,
@@ -78,20 +82,32 @@ export default function SignIn() {
                 </span>
               }
             </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700">Password</label>
-              <input
-                {...register("password", { required: true })}
-                type="password"
-                placeholder="********"
-                className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2"
-              />
-              {errors.password && 
-                <span className="text-red-500 text-sm">
-                  Password is required
-                </span>
-              }
+            <div>           
+              
+              <label className="text-sm font-medium text-gray-700">Your Password</label>
+
+              <div className="relative">
+                <input
+                  {...register("password", { required: true })}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="********"
+                  className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2 pr-10"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+
+              {errors.password && (
+                <span className="text-red-500 text-sm">Password is required</span>
+              )}
             </div>
+
             <button
               type="submit"
               disabled={isSubmitting}

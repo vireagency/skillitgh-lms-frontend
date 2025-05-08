@@ -1,9 +1,9 @@
-"use client"
 
 import { Outlet } from "react-router-dom"
 import { AppSidebar } from "@/Components/Sidebar"
 import { useNavigate } from "react-router-dom"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/Components/ui/sidebar"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/Components/ui/breadcrumb"
 
 function DashboardLayout() {
   const navigate = useNavigate()
@@ -11,10 +11,24 @@ function DashboardLayout() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className="bg-gray-100">
+      <SidebarInset>
         <div className="flex items-center p-4 border-b bg-white">
           <SidebarTrigger className="mr-4" />
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <Breadcrumb >
+            <BreadcrumbList className="flex items-center space-x-2">
+              <BreadcrumbItem>
+                <BreadcrumbLink className="cursor-pointer" onClick={() => navigate("/dashboard/workshops")}>workshops</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink className="cursor-pointer" onClick={() => navigate("/dashboard/courses-dashboard")}>Courses</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink className="cursor-pointer" onClick={() => navigate("/dashboard/profile")}>Profile</BreadcrumbLink>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
         <div className="p-4 overflow-y-auto">
           <Outlet />

@@ -66,7 +66,7 @@ const CoursesDashboard = () => {
   }, [view]); 
   
   return (
-    <div className="px-4 md:px-20 py-10">
+    <div className="px-4 md:px-20 py-10 bg-white">
       {/* Heading */}
       <div className="text-center mb-8">
         <h1 className="text-2xl font-semibold text-gray-800">Courses</h1>
@@ -76,7 +76,7 @@ const CoursesDashboard = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex justify-center gap-4 mt-6">
+      <div className="flex justify-center gap-4 mt-6 mb-6">
           <button
             onClick={() => setView("enrolled")}
             className={`px-4 py-2 rounded-full font-medium ${
@@ -191,12 +191,16 @@ const CoursesDashboard = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-3xl p-6 w-[90%] max-w-md h-[50%] relative text-center">
               <button
-                className="absolute top-3 right-4 text-gray-500 hover:text-gray-800"
+                className="absolute top-3 left-4 text-3xl text-gray-500 hover:text-gray-800"
                 onClick={() => setShowSuccessModal(false)}
               >
                 &times;
               </button>
-              <div className="text-2xl mb-2"><img src="/image 8.svg" alt="congrats" /></div> 
+              <div className="text-2xl mb-2 flex justify-center items-center">
+                <img 
+                src="/image 8.svg" 
+                alt="congrats" />
+              </div> 
               <h2 className="text-xl font-semibold mb-2">Congratulations!</h2>
               <p className="text-sm text-gray-700">
                 You have successfully registered for <strong>{selectedCourse?.title}</strong>.

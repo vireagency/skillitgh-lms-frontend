@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../index.css";
+import { Eye, EyeOff } from 'lucide-react';
 
 const SignUp = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const navigate = useNavigate();
   const {
     register,
@@ -96,19 +100,30 @@ const SignUp = () => {
 
             <div>
               <label className="text-sm font-medium text-gray-700">Your Password</label>
-              <input
-                {...register("password", {
-                  required: true,
-                  pattern: {
-                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,}$/,
-                    message: "Password must be at least 6 characters, include upper & lower case letters, and a symbol."
-                  }
-                })}
-                
-                type="password"
-                placeholder="********"
-                className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2"
-              />
+              <div className="relative">
+                <input
+                  {...register("password", {
+                    required: true,
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,}$/,
+                      message: "Password must be at least 6 characters, include upper & lower case letters, and a symbol."
+                    }
+                  })}
+                  
+                  type={showPassword ? "text" : "password"}                  
+                  placeholder="********"
+                  className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2"
+                />
+
+                <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-2 top-5 text-sm text-gray-500 focus:outline-none"
+                  >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+              
               {errors.password && (
                 <span className="text-red-500 text-sm">
                   {errors.password.message || "Password is required"}
@@ -119,12 +134,23 @@ const SignUp = () => {
 
             <div>
               <label className="text-sm font-medium text-gray-700">Confirm Password</label>
-              <input
-                {...register("confirmPassword", { required: true, validate: (value) => value === password || "Paaswords do not match"})}
-                type="password"
-                placeholder="********"
-                className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2"
-              />
+              <div className="relative">
+                <input
+                  {...register("confirmPassword", { required: true, validate: (value) => value === password || "Paaswords do not match"})}
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="********"
+                  className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  className="absolute right-2 top-5 text-sm text-gray-500 focus:outline-none"
+                >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+
               {errors.confirmPassword && <span className="text-red-500 text-sm">Please confirm your password</span>}
             </div>
 

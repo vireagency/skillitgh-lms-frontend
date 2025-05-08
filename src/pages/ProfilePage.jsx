@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "../index.css";
+import { FallingLines } from 'react-loader-spinner';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -31,7 +32,7 @@ const ProfilePage = () => {
     axios.put('https://skillitgh-lms.onrender.com/api/v1/dashboard/profile', formData)
       .then((response) => {
         console.log('Profile updated:', response.data);
-        setProfile(response.data.user);
+        setProfile(response.data.profile);
         setIsEditing(false);
       })
       .catch((error) => {
@@ -47,14 +48,29 @@ const ProfilePage = () => {
     console.log('Saved profile:', formData);
   };
 
-  if (!profile) return <div>Loading...</div>;
+  if (!profile) return <div className='flex justify-center items-center'><FallingLines
+    color="#4fa94d"
+    width="100"
+    visible={true}
+    ariaLabel="falling-circles-loading"
+    /></div>;
 
   return (
     <div className="p-10">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-center md:text-left">Profile</h1>
-          <p className="text-gray-600">Register for any course you are interested in</p>
+      <div className="flex justify-center items-center mb-6">
+        <div className="flex flex-col items-center justify-center">
+          <h1 className="text-3xl font-bold font-[Playfair] text-[#3E584C] text-center md:text-left">Profile</h1>
+          <p className="text-sm text-gray-500">Manage your profile information</p>
+        </div>
+        
+      </div>
+      <div className="flex items-center justify-between space-x-4 mb-6">
+        <div className='flex'>
+          <img src={profile.userImage} alt="avatar" className="w-16 h-16 rounded-full" />
+          <span>
+            <h2 className="text-lg font-semibold">{profile.firstName}</h2>
+            <p className="text-sm text-gray-500">{profile.email}</p>
+          </span>
         </div>
         {!isEditing && (
           <button
@@ -64,13 +80,6 @@ const ProfilePage = () => {
             Edit
           </button>
         )}
-      </div>
-      <div className="flex items-center space-x-4 mb-6">
-        <img src={profile.userImage} alt="avatar" className="w-16 h-16 rounded-full" />
-        <div>
-          <h2 className="text-lg font-semibold">{profile.firstName} {profile.lastName}</h2>
-          <p className="text-sm text-gray-500">{profile.email}</p>
-        </div>
       </div>
 
       {isEditing ? (
@@ -84,11 +93,26 @@ const ProfilePage = () => {
               <label className="block text-sm font-medium">Last Name</label>
               <input name="lastName" type="text" value={formData.lastName} onChange={handleChange} className="w-full p-2 border rounded" />
             </div>
-              <div>
+            <div>
+              <label className="block text-sm font-medium">Phone</label>
+              <input name="phone" type="text" value={formData.phone} onChange={handleChange} className="w-full p-2 border rounded" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium">Gender</label>
+              <select name="gender" value={formData.gender} onChange={handleChange} className="w-full p-2 border rounded">
+                <option>Male</option>
+                <option>Female</option>
+              </select>
+            </div>
+            <div>
               <label className="block text-sm font-medium">Email</label>
               <input name="country" type="text" value={formData.email} onChange={handleChange} className="w-full p-2 border rounded" />
             </div>
-                    
+            <div>
+              <label className="block text-sm font-medium">Location</label>
+              <input name="location" type="text" value={formData.location} onChange={handleChange} className="w-full p-2 border rounded" />
+            </div>
+          
           </div>
           <div className="mt-6 flex gap-4">
             <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={handleSave}>Save Changes</button>
@@ -97,14 +121,15 @@ const ProfilePage = () => {
         </>
       ) : (
         <>
-          {/* <div className="grid grid-cols-2 gap-4 mt-6">
-            <p><strong>First:</strong> {profile.nickname}</p>
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <p><strong>First Name:</strong> {profile.firstName}</p>
+            <p><strong>Last Name:</strong> {profile.lastName}</p>
+            <p><strong>Phone:</strong> {profile.phone}</p>
             <p><strong>Gender:</strong> {profile.gender}</p>
-            <p><strong>Country:</strong> {profile.country}</p>
-            <p><strong>Language:</strong> {profile.language}</p>
-            <p><strong>Time Zone:</strong> {profile.timezone}</p>
-          </div> */}
-          <div className="flex space-x-10 mt-10">
+            <p><strong>Email:</strong> {profile.email}</p>
+            <p><strong>Location:</strong> {profile.location}</p>            
+          </div>
+          {/* <div className="flex space-x-10 mt-10">
             <div className="text-center">
               <div className="relative w-24 h-24 mx-auto">
                 <svg className="w-full h-full" viewBox="0 0 36 36">
@@ -139,7 +164,7 @@ const ProfilePage = () => {
               </div>
               <p className="mt-2">Completion Rate</p>
             </div>
-          </div>
+          </div> */}
         </>
       )}
     </div>
