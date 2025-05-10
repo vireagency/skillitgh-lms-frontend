@@ -5,9 +5,14 @@ import "react-toastify/dist/ReactToastify.css";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import "../index.css";
+import { Eye, EyeOff } from 'lucide-react';
+
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
       register,
       handleSubmit,
@@ -16,29 +21,35 @@ export default function SignIn() {
 
  
     const onSubmit = async (data) => {
+      setErrorMessage("");
       try {
+        const res = await axios.post(
+          "https://skillitgh-lms.onrender.com/api/v1/auth/signin",
+          data,
+          { timeout: 5000 }
+        );
   
-        const response = await axios.post("https://skillitgh-lms.onrender.com/api/v1/auth/signin", data, { timeout: 5000 });
-            
-        toast.success("Successfully logged in!", {
-          position: "top-right",
-          autoClose: 2000,
-        });
+        const { token } = res.data;
   
-        console.log("Response:", response.data);
-        console.log("formData:", data);
-  
-        setTimeout(() => {navigate("/choosepath");}, 2500); 
-  
+        if (token) {
+          localStorage.setItem("token", token);
+          toast.success("Successfully logged in!", { autoClose: 2000 });
+          /*setTimeout(() => navigate("/choosepath"), 2500);*/
+          const hasChosenPath = res.data.user?.hasChosenPath;
+          setTimeout(() => { if (hasChosenPath) { 
+            localStorage.setItem("hasChosenPath", true);
+          navigate("/dashboard/courses-dashboard");
+         } else { 
+          navigate("/choosepath"); } }, 2500);
+        }
       } catch (error) {
-        const msg =
-          error.response?.data?.message || "An error occurred. Try again.";
-        toast.error(msg, {
-          position: "top-right",
-          autoClose: 2000,
-        });
+        const msg = error.response?.data?.message || "An error occurred. Try again.";
+        setErrorMessage(msg);
+        console.error("Error during sign-in:", error);
+        toast.error(msg, { autoClose: 2000 });
       }
     };
+    
 
   return (
     <div className="flex flex-col md:flex-row w-screen h-screen">
@@ -71,20 +82,32 @@ export default function SignIn() {
                 </span>
               }
             </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700">Password</label>
-              <input
-                {...register("password", { required: true })}
-                type="password"
-                placeholder="********"
-                className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2"
-              />
-              {errors.password && 
-                <span className="text-red-500 text-sm">
-                  Password is required
-                </span>
-              }
+            <div>           
+              
+              <label className="text-sm font-medium text-gray-700">Your Password</label>
+
+              <div className="relative">
+                <input
+                  {...register("password", { required: true })}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="********"
+                  className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2 pr-10"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+
+              {errors.password && (
+                <span className="text-red-500 text-sm">Password is required</span>
+              )}
             </div>
+
             <button
               type="submit"
               disabled={isSubmitting}
@@ -96,7 +119,7 @@ export default function SignIn() {
 
           <p className="text-sm mt-6">
             Don't have an account?
-            <Link to="/signup" className="text-blue-600 ml-1 underline">
+            <Link to="/" className="text-blue-600 ml-1 underline">
               Register
             </Link>
           </p>
