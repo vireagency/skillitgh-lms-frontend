@@ -175,8 +175,8 @@ const CoursesDashboard = () => {
                       setTimeout(() => {
                          setSelectedCourse(null);
                         setShowSuccessModal(false);
-                      }, 3000); // Close the modal after 3 seconds
-                      setTimeout(() => {setView("enrolled");}, 3100); // Refresh the courses after 3 seconds
+                      }, 3000); 
+                      setTimeout(() => {setView("enrolled");}, 3100);
                     })
                     .catch((err) => {
                       const backendMessage = err.response?.data?.message || "Registration failed.";

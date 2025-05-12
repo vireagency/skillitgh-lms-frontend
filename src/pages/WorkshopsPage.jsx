@@ -167,7 +167,11 @@ const WorkshopsPage = () => {
       toast.success(response.data.message || "Workshops loaded!");*/
       const data = response.data.workshops;
       if (Array.isArray(data) && data.length > 0) {
-        setWorkshops(data);
+        const enhancedData = data.map((workshop) => ({
+          ...workshop,
+          isRegistered: workshop.attendees?.includes(currentUserId),
+        }));
+        setWorkshops(enhancedData);
         toast.success(response.data.message || "Workshops loaded!");
       } /*else {
         setWorkshops([]); // ✅ Clear workshops
@@ -235,7 +239,6 @@ const WorkshopsPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {Array.isArray(workshops) &&
           workshops.map((workshop) => {
-            //const isRegistered = workshop.attendees.include(currentUser._id); // Check if the user is registered for the workshop
             return (
             <WorkshopCard
               key={workshop._id}
@@ -303,11 +306,15 @@ const WorkshopsPage = () => {
                 alt="Workshop"
                 className="w-full h-40 object-cover rounded-xl mb-4"
               />
-              <h2 className="text-xl font-semibold mb-2">{selectedWorkshop.title}</h2>
-              <p className="text-semibold text-gray-500 mb-2">Facilitator: {selectedWorkshop.facilitator.name}</p>
-              <p className="text-semibold text-gray-500 mb-2">Email: {selectedWorkshop.facilitator.email}</p>
-              <p className="text-semibold text-gray-500 mb-2">Location: {selectedWorkshop.location}</p>
+              <p className="text-sm text-black mb-2 ">
+              {new Date(selectedWorkshop.date).toLocaleDateString()}&nbsp;<strong>&bull; {status}&nbsp;</strong><span className="ml-20"><b>Price: </b>{selectedWorkshop.price}</span>
+              </p>
+              <h2 className="text-xl font-semibold my-4">{selectedWorkshop.title}</h2>
               <p className="text-semibold text-gray-700 mb-4">{selectedWorkshop.description}</p>
+              <p className="text-semibold text-gray-700 mb-2"><b>Duration: </b>{selectedWorkshop.duration}</p>
+              <p className="text-semibold text-gray-700 mb-2"><b>Facilitator: </b>{selectedWorkshop.facilitator.name}</p>
+              <p className="text-semibold text-gray-700 mb-2"><b>Email: </b>{selectedWorkshop.facilitator.email}</p>
+              <p className="text-semibold text-gray-700 mb-2"><b>Location: </b>{selectedWorkshop.location}</p>
               <button
                 className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
                 onClick={() => {
