@@ -113,6 +113,7 @@ import "../index.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import { FallingLines } from "react-loader-spinner";
 
 const WorkshopsPage = () => {
   const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -223,7 +224,13 @@ const WorkshopsPage = () => {
         </div>
       </div>
 
-      {loading && <p className="text-center text-gray-500">Loading workshops...</p>}
+      {loading && <div className='flex justify-center items-center'><FallingLines
+          color="#4fa94d"
+          width="100"
+          visible={true}
+          ariaLabel="falling-circles-loading"
+          /></div>
+      }
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {Array.isArray(workshops) &&
@@ -236,8 +243,8 @@ const WorkshopsPage = () => {
               date={new Date(workshop.date).toLocaleDateString()}
               status={status}
               image={workshop.workshopImage || "/image 6.png"}
-              description={workshop.description}
               id={workshop._id}
+              price={workshop.price}
               view={view}
               isRegistered={view === "upcoming" ? workshop.isRegistered : undefined}
               onClick={() => {
@@ -245,13 +252,48 @@ const WorkshopsPage = () => {
                   setSelectedWorkshop(workshop);
                 }
               }}
+
+              // onClick={() => {
+              //   if (view === "upcoming") {
+              //     if (workshop.isRegistered) {
+              //       // Trigger unregistration flow
+              //       axios
+              //         .post(
+              //           `https://skillitgh-lms.onrender.com/api/v1/workshops/${workshop._id}/unregister`,
+              //           {},
+              //           {
+              //             headers: {
+              //               Authorization: `Bearer ${localStorage.getItem("token")}`
+              //             }
+              //           }
+              //         )
+              //         .then(() => {
+              //           toast.success("Successfully unregistered!");
+              //           setWorkshops((prev) =>
+              //             prev.map((w) =>
+              //               w._id === workshop._id ? { ...w, isRegistered: false } : w
+              //             )
+              //           );
+              //         })
+              //         .catch((err) => {
+              //           toast.error("Failed to unregister");
+              //           console.error(err);
+              //         });
+              //     } else {
+              //       setSelectedWorkshop(workshop); // Show register modal
+              //     }
+              //   }
+              // }}
+              
+
+
             />);
           })}
         {selectedWorkshop && view === "upcoming" && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-3xl border-2 border-green-500 p-6 w-[90%] max-w-md relative">
+            <div className="bg-white rounded-3xl border-2 border-green-500 py-10 px-20 w-[90%] max-w-lg relative">
               <button
-                className="absolute top-2 left-4 text-3xl text-gray-500 hover:text-gray-800"
+                className="absolute top-2 left-4 text-3xl text-red-500 hover:text-gray-800"
                 onClick={() => setSelectedWorkshop(null)}
               >
                 &times;
@@ -262,9 +304,12 @@ const WorkshopsPage = () => {
                 className="w-full h-40 object-cover rounded-xl mb-4"
               />
               <h2 className="text-xl font-semibold mb-2">{selectedWorkshop.title}</h2>
-              <p className="text-sm text-gray-700 mb-4">{selectedWorkshop.description}</p>
+              <p className="text-semibold text-gray-500 mb-2">Facilitator: {selectedWorkshop.facilitator.name}</p>
+              <p className="text-semibold text-gray-500 mb-2">Email: {selectedWorkshop.facilitator.email}</p>
+              <p className="text-semibold text-gray-500 mb-2">Location: {selectedWorkshop.location}</p>
+              <p className="text-semibold text-gray-700 mb-4">{selectedWorkshop.description}</p>
               <button
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
                 onClick={() => {
                   axios
                     .post(
@@ -309,9 +354,9 @@ const WorkshopsPage = () => {
 
         {showSuccessModal &&  (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-3xl border-2 border-green-500 p-6 w-[90%] max-w-md h-[50%] relative text-center">
+            <div className="bg-white rounded-3xl border-2 border-green-500 p-6 w-[90%] max-w-lg h-[50%] relative text-center">
               <button
-                className="absolute top-3 left-4 text-3xl text-gray-500 hover:text-gray-800"
+                className="absolute top-3 left-4 text-3xl text-red-500 hover:text-gray-800"
                 onClick={() => setShowSuccessModal(false)}
               >
                 &times;

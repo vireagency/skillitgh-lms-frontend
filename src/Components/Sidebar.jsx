@@ -75,8 +75,8 @@ export function AppSidebar() {
   };
 
   const menu = [
-    { type: "link", label: "Workshops", icon: <Anvil className="mr-2 h-5 w-5" />, path: "/dashboard/workshops" },
     { type: "link", label: "Courses", icon: <BookOpen className="mr-2 h-5 w-5" />, path: "/dashboard/courses-dashboard" },
+    { type: "link", label: "Workshops", icon: <Anvil className="mr-2 h-5 w-5" />, path: "/dashboard/workshops" },
     { type: "link", label: "Profile", icon: <User className="mr-2 h-5 w-5" />, path: "/dashboard/profile" },
     { type: "action", label: "Sign out", icon: <LogOut className="mr-2 h-5 w-5" />, action: handleLogout },
   ];
@@ -120,7 +120,7 @@ export function AppSidebar() {
             <div className="flex justify-end space-x-4">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 rounded-full text-gray-600 hover:bg-gray-100"
+                className="px-4 py-2 bg-gray-100 rounded-full text-gray-600 hover:bg-red-500 hover:text-white"
               >
                 Cancel
               </button>

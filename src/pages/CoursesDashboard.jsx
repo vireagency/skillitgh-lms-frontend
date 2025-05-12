@@ -6,6 +6,7 @@ import "../index.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import { FallingLines } from "react-loader-spinner";
 
 const CoursesDashboard = () => { 
   const [courses, setCourses] = useState([]);
@@ -49,7 +50,7 @@ const CoursesDashboard = () => {
         if (Array.isArray(data) && data.length > 0) {
           setCourses(data);
           toast.success(response.data.message || "Courses loaded!");
-          console.log(response.data.data);
+          console.log(response.data.courses);
         }
       })
       .catch((err) => {
@@ -99,7 +100,12 @@ const CoursesDashboard = () => {
           </button>
         </div>
 
-        {loading && <p className="text-center text-gray-500">Loading courses...</p>}
+        {loading && <div className='flex justify-center items-center'><FallingLines
+            color="#4fa94d"
+            width="100"
+            visible={true}
+            ariaLabel="falling-circles-loading"
+            /></div>}
 
       {/* Course Card *
       <div className="w-full max-w-sm bg-gray-100 rounded-xl shadow-sm p-4">
@@ -132,9 +138,9 @@ const CoursesDashboard = () => {
           ))}
           {selectedCourse && view === "other" && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-3xl border-2 border-green-500 p-6 w-[90%] max-w-md relative">
+            <div className="bg-white rounded-3xl border-2 border-green-500 py-10 px-20 w-[90%] max-w-lg relative">
               <button
-                className="absolute top-2 left-4 text-3xl text-gray-500 hover:text-gray-800"
+                className="absolute top-2 left-4 text-3xl text-red-500 hover:text-gray-800"
                 onClick={() => setSelectedCourse(null)}
               >
                 &times;
@@ -189,9 +195,9 @@ const CoursesDashboard = () => {
         )}
         {showSuccessModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-3xl p-6 w-[90%] max-w-md h-[50%] relative text-center">
+            <div className="bg-white rounded-3xl p-6 w-[90%] max-w-lg h-[50%] relative text-center">
               <button
-                className="absolute top-3 left-4 text-3xl text-gray-500 hover:text-gray-800"
+                className="absolute top-3 left-4 text-3xl text-red-500 hover:text-gray-800"
                 onClick={() => setShowSuccessModal(false)}
               >
                 &times;

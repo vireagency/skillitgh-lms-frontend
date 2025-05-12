@@ -28,19 +28,28 @@ export default function SignIn() {
           data,
           { timeout: 5000 }
         );
-  
-        const { token } = res.data;
-  
+    
+        const { token, user } = res.data;
+    
         if (token) {
           localStorage.setItem("token", token);
+          localStorage.setItem("user", JSON.stringify(user)); // Save user data
+    
           toast.success("Successfully logged in!", { autoClose: 2000 });
-          /*setTimeout(() => navigate("/choosepath"), 2500);*/
-          const hasChosenPath = res.data.user?.hasChosenPath;
-          setTimeout(() => { if (hasChosenPath) { 
-            localStorage.setItem("hasChosenPath", true);
-          navigate("/dashboard/courses-dashboard");
-         } else { 
-          navigate("/choosepath"); } }, 2500);
+    
+          // Conditional redirect based on registration
+          setTimeout(() => {
+            const hasCourses = user?.courses?.length > 0;
+            const hasWorkshops = user?.workshops?.length > 0;
+    
+            if (hasCourses) {
+              navigate("/dashboard/courses-dashboard");
+            } else if (hasWorkshops) {
+              navigate("/dashboard/workshops");
+            } else {
+              navigate("/choosepath");
+            }
+          }, 2500);
         }
       } catch (error) {
         const msg = error.response?.data?.message || "An error occurred. Try again.";
@@ -49,6 +58,7 @@ export default function SignIn() {
         toast.error(msg, { autoClose: 2000 });
       }
     };
+    
     
 
   return (

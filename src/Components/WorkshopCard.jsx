@@ -3,7 +3,7 @@ import React from "react";
 //import { Card } from "./ui/card";
 //import { CardHeader, CardTitle, CardContent, CardFooter } from "./ui/card";
 
-const WorkshopCard = ({ title, date, status, image, description, onClick, view, isRegistered }) => {
+const WorkshopCard = ({ title, date, status, image, facilitator, price, location, description, onClick, view, isRegistered }) => {
   const clickable = view === "upcoming";
 
 
@@ -22,21 +22,22 @@ const WorkshopCard = ({ title, date, status, image, description, onClick, view, 
       <div className="p-4">
         <h2 className="text-lg font-bold text-gray-800 mb-2">{title}</h2>
         <p className="text-sm text-gray-500 mb-2">
-          {date} <strong>&bull; {status}</strong>{" "}
+          {date} <strong>&bull; {status}</strong> <span>Price: {price}</span>
+          <span className="float-right">
           {isRegistered ? (
-            <p className="text-green-600 font-medium">You're registered</p>
+            <p className="text-white bg-red-600 rounded font-medium">Unregister</p>
           ) : (
             <button
               onClick={() => handleRegister(workshop._id)}
-              className="bg-blue-600 text-white px-4 py-2 rounded mt-2"
+              className="text-white bg bg-green-500 rounded h-auto w-auto font-semibold"
             >
               Register
             </button>
           )}
-        </p>{/*
-        </p>{/*
+          </span>
+        </p>
         <p className="text-sm text-gray-500">{facilitator}</p>
-        <p className="text-sm text-gray-500">{location}</p>*/}
+        <p className="text-sm text-gray-500">{location}</p>
         <p className="text-sm text-gray-500">{description}</p>
       </div>
     </div>

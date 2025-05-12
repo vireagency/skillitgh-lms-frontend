@@ -17,6 +17,7 @@ const ProfilePage = () => {
         const data = response.data.user;
       setProfile(data);
       setFormData(data);
+      console.log('Fetched profile:', data);
     };
 
     fetchProfile();
@@ -31,8 +32,8 @@ const ProfilePage = () => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
     axios.put('https://skillitgh-lms.onrender.com/api/v1/dashboard/profile', formData)
       .then((response) => {
-        console.log('Profile updated:', response.data);
-        setProfile(response.data.profile);
+        console.log('Profile updated:', response.data.user);
+        setProfile(response.data.user);
         setIsEditing(false);
       })
       .catch((error) => {
@@ -95,13 +96,13 @@ const ProfilePage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium">Phone</label>
-              <input name="phone" type="text" value={formData.phone} onChange={handleChange} className="w-full p-2 border rounded" />
+              <input name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} className="w-full p-2 border rounded" />
             </div>
             <div>
               <label className="block text-sm font-medium">Gender</label>
               <select name="gender" value={formData.gender} onChange={handleChange} className="w-full p-2 border rounded">
-                <option>Male</option>
-                <option>Female</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
               </select>
             </div>
             <div>
@@ -124,7 +125,7 @@ const ProfilePage = () => {
           <div className="grid grid-cols-2 gap-4 mt-6">
             <p><strong>First Name:</strong> {profile.firstName}</p>
             <p><strong>Last Name:</strong> {profile.lastName}</p>
-            <p><strong>Phone:</strong> {profile.phone}</p>
+            <p><strong>Phone:</strong> {profile.phoneNumber}</p>
             <p><strong>Gender:</strong> {profile.gender}</p>
             <p><strong>Email:</strong> {profile.email}</p>
             <p><strong>Location:</strong> {profile.location}</p>            
