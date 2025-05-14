@@ -15,6 +15,7 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 import ProfilePage from "./pages/ProfilePage";
 import AdminDashboardLayout from "./routes/admin-dashboard/adminDashboardLayout";
 import AdminDashboard from "./pages/AdminDashboard";
+import ManageUsers from "./pages/ManageUsers";
 
 
 const App = () => {
@@ -24,7 +25,7 @@ const App = () => {
       <Route path="/signin" element={<SignIn />} />
       <Route path="/admin-dashboard/*" element={<AdminDashboardLayout />} >
         <Route index element={<AdminDashboard />} />
-        <Route path="users" element={<AdminDashboard />} />
+        <Route path="users" element={<ManageUsers />} />
         <Route path="content" element={<AdminDashboard />} />
       </Route>
       

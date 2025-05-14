@@ -59,7 +59,7 @@ function AdminDashboardLayout() {
           </div>
           <div className="relative">
             <img
-              src={showProfile ? showProfile : "/default-avatar.png"}
+              src={showProfile}
               alt="avatar"
               className="w-8 h-8 rounded-full border cursor-pointer"
               onClick={() => setShowProfile(!showProfile)}
