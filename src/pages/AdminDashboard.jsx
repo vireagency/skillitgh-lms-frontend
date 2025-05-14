@@ -1,27 +1,25 @@
-// AdminDashboard.jsx
-import React from 'react';
+import RegisteredCoursesCard from '../Components/RegisteredCoursesCard';
+import RegisteredWorkshopsCard from '../Components/RegisteredWorkshopsCard';
+import WorkshopAttendanceGraph from '../Components/WorkshopAttendanceGraph';
+import CalendarPanel from '../Components/CalendarPanel'; 
 
-const AdminDashboard = () => {
-    // Example data for registered users and courses
-    const registrations = [
-        { user: 'User 1', courses: ['Course 1'], workshops: ['Workshop 1'] },
-        { user: 'User 2', courses: ['Course 2'], workshops: [] },
-    ];
-
-    return (
-        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Admin Dashboard</h2>
-            <h3 className="text-xl mb-2">Registered Users</h3>
-            <ul className="list-disc pl-5">
-                {registrations.map((registration, index) => (
-                    <li key={index}>
-                        {registration.user}: Courses - {registration.courses.join(', ')}, Workshops - {registration.workshops.join(', ')}
-                    </li>
-                ))}
-            </ul>
-            {/* Add functionality for adding/editing/removing courses here */}
+export default function AdminDashboard() {
+  return (
+    <div className="flex flex-col lg:flex-row p-6 gap-6">
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <RegisteredCoursesCard />
+          <RegisteredWorkshopsCard />
         </div>
-    );
-};
 
-export default AdminDashboard;
+        <WorkshopAttendanceGraph />
+      </div>
+
+      {/* Right side calendar */}
+      <div className="w-full lg:w-80">
+        <CalendarPanel />
+      </div>
+    </div>
+  );
+}

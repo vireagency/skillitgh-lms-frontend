@@ -41,8 +41,11 @@ export default function SignIn() {
           setTimeout(() => {
             const hasCourses = user?.courses?.length > 0;
             const hasWorkshops = user?.workshops?.length > 0;
-    
-            if (hasCourses) {
+            const isAdmin = user?.role === "admin";
+
+            if (isAdmin) {
+              navigate("/admin-dashboard");
+            } else if (hasCourses) {
               navigate("/dashboard/courses-dashboard");
             } else if (hasWorkshops) {
               navigate("/dashboard/workshops");
@@ -66,14 +69,14 @@ export default function SignIn() {
       {/* Left Image Side */}
       <div className="w-full md:w-1/2 h-1/2 md:h-full relative ">
         <img
-          src="./image 9.png"
+          src="./About1.jpg"
           alt="Sign up visual"
-          className="w-full h-5/6 object-cover"
+          className="w-full h-full rounded-br-3xl rounded-r-3xl object-cover"
         />
       </div>
 
       {/* Right Form Side */}
-      <div className="w-full md:w-1/2 h-1/2 md:h-full flex items-stretch justify-start p-10 bg-white">
+      <div className="w-full md:w-1/2 h-1/2 md:h-full flex items-between justify-start pt-52 px-52 bg-white">
         <div className="w-full max-w-md">
           <h2 className="text-4xl font-medium font-montserrat text-gray-800 mb-8">Sign In</h2>
 

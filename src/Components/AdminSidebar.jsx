@@ -59,7 +59,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { BookOpen, Anvil, LogOut, User } from "lucide-react";
 
-export function AppSidebar() {
+export function AdminSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
@@ -75,9 +75,9 @@ export function AppSidebar() {
   };
 
   const menu = [
-    { type: "link", label: "Courses", icon: <BookOpen className="mr-2 h-5 w-5" />, path: "/dashboard" },
-    { type: "link", label: "Workshops", icon: <Anvil className="mr-2 h-5 w-5" />, path: "/dashboard/workshops" },
-    { type: "link", label: "Profile", icon: <User className="mr-2 h-5 w-5" />, path: "/dashboard/profile" },
+    { type: "link", label: "Dashboard", icon: <BookOpen className="mr-2 h-5 w-5" />, path: "/admin-dashboard" },
+    { type: "link", label: "Manage Users", icon: <Anvil className="mr-2 h-5 w-5" />, path: "/admin-dashboard/users" },
+    { type: "link", label: "Manage Content", icon: <User className="mr-2 h-5 w-5" />, path: "/admin-dashboard/content" },
     { type: "action", label: "Sign out", icon: <LogOut className="mr-2 h-5 w-5" />, action: handleLogout },
   ];
 
@@ -138,4 +138,4 @@ export function AppSidebar() {
   );
 }
 
-export default AppSidebar;
+export default AdminSidebar;

@@ -47,19 +47,19 @@ const SignUp = () => {
   };
 
   return (
-    <div className="w-screen h-screen grid grid-cols-1 md:grid-cols-2 bg-white overflow-y-auto">
+    <div className="w-screen h-screen grid grid-cols-1 md:grid-cols-2 bg-white ">
       
       {/* Left Image Side */}
-      <div className="h-2/3 w-full ">
+      <div className="h-full w-full ">
         <img
-          src="./About1.jpg"
+          src="./image 23.png"
           alt="Sign up visual"
-          className="w-full h-full object-cover rounded-br-3xl"
+          className="w-full h-full rounded-br-3xl rounded-r-3xl object-cover "
         />
       </div>
 
       {/* Right Form Side */}
-      <div className="w-full md:w-2/3 min-h-screen md:h-full flex items-stretch justify-start p-10 bg-white">
+      <div className="w-full md:w-2/3 min-h-screen md:h-full flex items-stretch justify-center pt-32 pl-32 bg-white">
         <div className="w-full max-w-md ">
           <h2 className="text-4xl font-normal font-montserrat text-gray-800 mb-8">Register</h2>
 

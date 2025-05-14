@@ -60,7 +60,7 @@ const ProfilePage = () => {
     <div className="p-10">
       <div className="flex justify-center items-center mb-6">
         <div className="flex flex-col items-center justify-center">
-          <h1 className="text-3xl font-bold font-[Playfair] text-[#3E584C] text-center md:text-left">Profile</h1>
+          <h1 className="text-3xl font-bold font-montserrat text-[#3E584C] text-center md:text-left">Profile</h1>
           <p className="text-sm text-gray-500">Manage your profile information</p>
         </div>
         
@@ -96,7 +96,7 @@ const ProfilePage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium">Phone</label>
-              <input name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} className="w-full p-2 border rounded" />
+              <input name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} className="w-full p-2 border rounded" placeholder='Enter your active phone number'/>
             </div>
             <div>
               <label className="block text-sm font-medium">Gender</label>
@@ -111,7 +111,7 @@ const ProfilePage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium">Location</label>
-              <input name="location" type="text" value={formData.location} onChange={handleChange} className="w-full p-2 border rounded" />
+              <input name="location" type="text" value={formData.location} onChange={handleChange} className="w-full p-2 border rounded" placeholder='Enter your current location' />
             </div>
           
           </div>

@@ -127,6 +127,9 @@ const WorkshopsPage = () => {
   const [status, setStatus] = useState("Upcoming");
   const [selectedWorkshop, setSelectedWorkshop] = useState(null); 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showUnregisterModal, setShowUnregisterModal] = useState(false);
+  const [unregisterWorkshop, setUnregisterWorkshop] = useState(null);
+
  
 
   // const openModal = (workshop) => {
@@ -250,43 +253,23 @@ const WorkshopsPage = () => {
               price={workshop.price}
               view={view}
               isRegistered={view === "upcoming" ? workshop.isRegistered : undefined}
-              onClick={() => {
-                if (view === "upcoming" && !workshop.isRegistered) {
-                  setSelectedWorkshop(workshop);
-                }
-              }}
-
               // onClick={() => {
-              //   if (view === "upcoming") {
-              //     if (workshop.isRegistered) {
-              //       // Trigger unregistration flow
-              //       axios
-              //         .post(
-              //           `https://skillitgh-lms.onrender.com/api/v1/workshops/${workshop._id}/unregister`,
-              //           {},
-              //           {
-              //             headers: {
-              //               Authorization: `Bearer ${localStorage.getItem("token")}`
-              //             }
-              //           }
-              //         )
-              //         .then(() => {
-              //           toast.success("Successfully unregistered!");
-              //           setWorkshops((prev) =>
-              //             prev.map((w) =>
-              //               w._id === workshop._id ? { ...w, isRegistered: false } : w
-              //             )
-              //           );
-              //         })
-              //         .catch((err) => {
-              //           toast.error("Failed to unregister");
-              //           console.error(err);
-              //         });
-              //     } else {
-              //       setSelectedWorkshop(workshop); // Show register modal
-              //     }
+              //   if (view === "upcoming" && !workshop.isRegistered) {
+              //     setSelectedWorkshop(workshop);
               //   }
               // }}
+
+              onClick={() => {
+                if (view === "upcoming") {
+                  if (workshop.isRegistered) {
+                    setUnregisterWorkshop(workshop);
+                    setShowUnregisterModal(true);
+                  } else {
+                    setSelectedWorkshop(workshop);
+                  }
+                  
+                }
+              }}
               
 
 
@@ -360,10 +343,10 @@ const WorkshopsPage = () => {
         )}
 
         {showSuccessModal &&  (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
             <div className="bg-white rounded-3xl border-2 border-green-500 p-6 w-[90%] max-w-lg h-[50%] relative text-center">
               <button
-                className="absolute top-3 left-4 text-3xl text-red-500 hover:text-gray-800"
+                className="absolute top-3 left-4 text-4xl text-red-500 hover:text-gray-800"
                 onClick={() => setShowSuccessModal(false)}
               >
                 &times;
@@ -378,6 +361,59 @@ const WorkshopsPage = () => {
                 You have successfully registered for <strong>{selectedWorkshop.title}</strong>.
               </p>
               <p className="text-sm text-gray-500 mt-2">Stay tuned</p>
+            </div>
+          </div>
+        )}
+
+        {showUnregisterModal && unregisterWorkshop && (
+          <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+            <div className="bg-white rounded-3xl border-2 border-red-500 py-10 px-10 w-[90%] max-w-md relative text-center">
+              <h2 className="text-xl font-semibold mb-4">Confirm Unregistration</h2>
+              <p className="text-sm text-gray-700 mb-6">
+                Are you sure you want to unregister from <strong>{unregisterWorkshop.title}</strong>?
+              </p>
+              <div className="flex justify-center gap-4">
+                <button
+                  className="bg-gray-300 px-4 py-2 rounded-full text-sm"
+                  onClick={() => {
+                    setShowUnregisterModal(false);
+                    setUnregisterWorkshop(null);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-red-500 text-white px-4 py-2 rounded-full text-sm hover:bg-red-600"
+                  onClick={() => {
+                    axios
+                      .post(
+                        `https://skillitgh-lms.onrender.com/api/v1/workshops/${unregisterWorkshop._id}/unregister`,
+                        {},
+                        {
+                          headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                          },
+                        }
+                      )
+                      .then(() => {
+                        toast.success("Successfully unregistered!");
+                        setWorkshops((prev) =>
+                          prev.map((w) =>
+                            w._id === unregisterWorkshop._id ? { ...w, isRegistered: false } : w
+                          )
+                        );
+                        setShowUnregisterModal(false);
+                        setUnregisterWorkshop(null);
+                      })
+                      .catch((err) => {
+                        toast.error("Failed to unregister");
+                        console.error(err);
+                      });
+                  }}
+                >
+                  Confirm
+                </button>
+              </div>
             </div>
           </div>
         )}
