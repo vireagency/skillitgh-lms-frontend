@@ -46,7 +46,7 @@ export default function SignIn() {
             if (isAdmin) {
               navigate("/admin-dashboard");
             } else if (hasCourses) {
-              navigate("/dashboard/courses-dashboard");
+              navigate("/dashboard");
             } else if (hasWorkshops) {
               navigate("/dashboard/workshops");
             } else {
