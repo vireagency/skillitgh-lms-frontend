@@ -61,7 +61,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { FallingLines } from "react-loader-spinner";
 
-const COLORS = ['bg-red-200', 'bg-blue-100', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500'];
+const COLORS = ['bg-red-400', 'bg-green-400', 'bg-orange-400'];
 const MAX_VISIBLE = 3;
 
 
@@ -137,7 +137,7 @@ const CalendarPanel = () => {
       </div>
 
       {/* Incoming Meetings */}
-      <div className="text-xs font-semibold text-gray-500 mb-2">Upcoming Worksops</div>
+      <div className="text-xs font-semibold text-gray-500 mb-2">Upcoming Workshops</div>
       <div className="space-y-2">
         {loading ? (
           <div className="flex justify-center items-center h-full">
@@ -155,7 +155,7 @@ const CalendarPanel = () => {
             {visibleEvents.map((meeting, index) => (
               <div
                 key={index}
-                className={`text-white px-2 py-1 rounded ${meeting.color || "bg-gray-500"} text-sm font-medium`}
+                className={`text-gray-900 px-2 py-1 rounded ${meeting.color || "bg-gray-500"} text-sm font-medium`}
               >
                 <span className="mr-2">{dayjs(meeting.date).format("D MMM")}</span>
                 {meeting.title}
