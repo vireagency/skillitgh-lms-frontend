@@ -13,7 +13,7 @@ export default function AdminDashboard() {
           <RegisteredWorkshopsCard />
         </div>
 
-        <WorkshopAttendanceGraph />
+        {/* <WorkshopAttendanceGraph /> */}
       </div>
 
       {/* Right side calendar */}

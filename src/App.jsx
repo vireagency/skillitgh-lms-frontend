@@ -47,8 +47,8 @@ const App = () => {
           </ProtectedRoute>
         }
       >
-        <Route index element={<WorkshopsPage />} />
-        <Route path="courses-dashboard" element={<CoursesDashboard />} />
+        <Route path="workshops" element={<WorkshopsPage />} />
+        <Route index element={<CoursesDashboard />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
       {/* ✅ Protected Routes End */}
