@@ -176,7 +176,7 @@ export default function ManageUsers() {
               onClick={() => {
                 // Call API to update user
                 axios.patch(`${api}/${updateUser._id}`, updateUser, {
-                  headers: { Authorization: `Bearer ${token}` },
+                  withCredentials: true
                 })
                   .then(() => {
                     setShowUpdateModal(false);

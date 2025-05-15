@@ -12,19 +12,27 @@ const ProfilePage = () => {
   const [formData, setFormData] = useState({});
   const [imageFile, setImageFile] = useState(null);
 
-
   useEffect(() => {
     const fetchProfile = async () => {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-        const response = await axios.get('https://skillitgh-lms.onrender.com/api/v1/dashboard/profile');
+      try {
+        const response = await axios.get(
+          'https://skillitgh-lms.onrender.com/api/v1/dashboard/profile',
+          {
+            withCredentials: true
+          }
+        );
         const data = response.data.user;
-      setProfile(data);
-      setFormData(data);
-      console.log('Fetched profile:', data);
+        setProfile(data);
+        setFormData(data);
+        console.log('Fetched profile:', data);
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+      }
     };
 
     fetchProfile();
   }, []);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,10 +62,22 @@ const ProfilePage = () => {
       {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        withCredentials: true, // ✅ Send cookies like accessToken
       }
     );
+
+
+    // const response = await axios.put(
+    //   "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile",
+    //   formDataToSend,
+    //   {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+    //     },
+    //   }
+    // );
 
     setProfile(response.data.user);
     toast.success("Profile updated successfully!");

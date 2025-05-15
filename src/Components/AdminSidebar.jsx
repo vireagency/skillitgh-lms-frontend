@@ -68,11 +68,27 @@ export function AdminSidebar() {
     setShowModal(true);
   };
 
-  const confirmLogout = () => {
+  // const confirmLogout = () => {
+  //   setShowModal(false);
+  //   localStorage.removeItem("token");
+  //   navigate("/signin");
+  // };
+
+  const confirmLogout = async () => {
     setShowModal(false);
-    localStorage.removeItem("token");
-    navigate("/signin");
+    try {
+      await axios.post(
+        "https://skillitgh-lms.onrender.com/api/v1/auth/logout",
+        {},
+        { withCredentials: true }
+      );
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      navigate("/signin");
+    }
   };
+
 
   const menu = [
     { type: "link", label: "Dashboard", icon: <BookOpen className="mr-2 h-5 w-5" />, path: "/admin-dashboard" },

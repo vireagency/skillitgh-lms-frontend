@@ -83,9 +83,7 @@ const CalendarPanel = () => {
       try {
         const res = await axios.get("https://skillitgh-lms.onrender.com/api/v1/workshops/upcoming",
           {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
+            withCredentials: true
           }
         );
         const eventsWithColors = res.data.workshops.map(event => ({

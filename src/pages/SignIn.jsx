@@ -19,48 +19,90 @@ export default function SignIn() {
       formState: { errors, isSubmitting },
     } = useForm();
 
- 
     const onSubmit = async (data) => {
-      setErrorMessage("");
-      try {
-        const res = await axios.post(
-          "https://skillitgh-lms.onrender.com/api/v1/auth/signin",
-          data,
-          { timeout: 5000 }
-        );
-    
-        const { token, user } = res.data;
-    
-        if (token) {
-          localStorage.setItem("token", token);
-          localStorage.setItem("user", JSON.stringify(user)); // Save user data
-    
-          toast.success("Successfully logged in!", { autoClose: 2000 });
-    
-          // Conditional redirect based on registration
-          setTimeout(() => {
-            const hasCourses = user?.courses?.length > 0;
-            const hasWorkshops = user?.workshops?.length > 0;
-            const isAdmin = user?.role === "admin";
-
-            if (isAdmin) {
-              navigate("/admin-dashboard");
-            } else if (hasCourses) {
-              navigate("/dashboard");
-            } else if (hasWorkshops) {
-              navigate("/dashboard/workshops");
-            } else {
-              navigate("/choosepath");
-            }
-          }, 2500);
-        }
-      } catch (error) {
-        const msg = error.response?.data?.message || "An error occurred. Try again.";
-        setErrorMessage(msg);
-        console.error("Error during sign-in:", error);
-        toast.error(msg, { autoClose: 2000 });
+  setErrorMessage("");
+  try {
+    const res = await axios.post(
+      "https://skillitgh-lms.onrender.com/api/v1/auth/signin",
+      data,
+      {
+        withCredentials: true, // ✅ Send/receive cookies
+        timeout: 5000,
       }
-    };
+    );
+
+    const { user } = res.data;
+
+    localStorage.setItem("user", JSON.stringify(user)); // You can still store user data if needed
+
+    toast.success("Successfully logged in!", { autoClose: 2000 });
+
+    // Conditional redirect
+    setTimeout(() => {
+      const hasCourses = user?.courses?.length > 0;
+      const hasWorkshops = user?.workshops?.length > 0;
+      const isAdmin = user?.role === "admin";
+
+      if (isAdmin) {
+        navigate("/admin-dashboard");
+      } else if (hasCourses) {
+        navigate("/dashboard");
+      } else if (hasWorkshops) {
+        navigate("/dashboard/workshops");
+      } else {
+        navigate("/choosepath");
+      }
+    }, 2500);
+  } catch (error) {
+    const msg = error.response?.data?.message || "An error occurred. Try again.";
+    setErrorMessage(msg);
+    console.error("Error during sign-in:", error);
+    toast.error(msg, { autoClose: 2000 });
+  }
+};
+
+ 
+    // const onSubmit = async (data) => {
+    //   setErrorMessage("");
+    //   try {
+    //     const res = await axios.post(
+    //       "https://skillitgh-lms.onrender.com/api/v1/auth/signin",
+    //       data,
+    //       { timeout: 5000 }
+    //     );
+    
+    //     const { token, user } = res.data;
+    
+    //     if (token) {
+    //       localStorage.setItem("token", token);
+    //       localStorage.setItem("user", JSON.stringify(user)); // Save user data
+    
+    //       toast.success("Successfully logged in!", { autoClose: 2000 });
+    
+    //       // Conditional redirect based on registration
+    //       setTimeout(() => {
+    //         const hasCourses = user?.courses?.length > 0;
+    //         const hasWorkshops = user?.workshops?.length > 0;
+    //         const isAdmin = user?.role === "admin";
+
+    //         if (isAdmin) {
+    //           navigate("/admin-dashboard");
+    //         } else if (hasCourses) {
+    //           navigate("/dashboard");
+    //         } else if (hasWorkshops) {
+    //           navigate("/dashboard/workshops");
+    //         } else {
+    //           navigate("/choosepath");
+    //         }
+    //       }, 2500);
+    //     }
+    //   } catch (error) {
+    //     const msg = error.response?.data?.message || "An error occurred. Try again.";
+    //     setErrorMessage(msg);
+    //     console.error("Error during sign-in:", error);
+    //     toast.error(msg, { autoClose: 2000 });
+    //   }
+    // };
     
     
 

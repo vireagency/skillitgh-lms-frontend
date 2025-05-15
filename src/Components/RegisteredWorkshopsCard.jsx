@@ -55,10 +55,15 @@ export default function RegisteredWorkshopsCard() {
   useEffect(() => {
     const fetchWorkshops = async () => {
       try {
-        const res = await axios.get("https://skillitgh-lms.onrender.com/api/v1/dashboard/registeredUsers"); 
-        setWorkshops(res.data);
+        const res = await axios.get("https://skillitgh-lms.onrender.com/api/v1/workshops/registeredWorkshops",
+          {
+            withCredentials: true
+          }
+        ); 
+        setWorkshops(res.data.workshops);
+        console.log(res.data.workshops);
       } catch (err) {
-        console.error("Failed to fetch courses:", err);
+        console.error("Failed to fetch workshops:", err);
       } finally {
         setLoading(false);
       }

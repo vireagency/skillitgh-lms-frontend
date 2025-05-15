@@ -45,9 +45,7 @@ const ChooseCourse = () => {
                     messageBody: reason
                 },
                 {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                    withCredentials: true
                 }
             );
     

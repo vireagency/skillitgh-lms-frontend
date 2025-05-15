@@ -11,7 +11,7 @@ export function AdminProfilePanel() {
 
     axios
     .get("https://skillitgh-lms.onrender.com/api/v1/dashboard/profile", {
-    headers: { Authorization: `Bearer ${token}` },
+     withCredentials: true
     })
     .then((res) => setAdmin(res.data.user))
     .catch((err) => console.error("Admin fetch error:", err));
@@ -57,7 +57,7 @@ export function NotificationPanel(){
 
         axios
         .get("https://skillitgh-lms.onrender.com/api/v1/notifications", {
-            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true
         })
         .then((res) => setNotifications(res.data))
         .catch((err) => console.error("Notification fetch error:", err));

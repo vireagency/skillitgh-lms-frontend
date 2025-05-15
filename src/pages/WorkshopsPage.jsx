@@ -145,11 +145,11 @@ const WorkshopsPage = () => {
     setErrorMessage(""); 
     setStatus(view === "upcoming" ? "Upcoming" : "Previous"); // Set status based on view
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toast("Please sign in first.");
-      return;
-    }
+    // const token = localStorage.getItem("token");
+    // if (!token) {
+    //   toast("Please sign in first.");
+    //   return;
+    // }
     
     const url =
     view === "upcoming"
@@ -159,9 +159,7 @@ const WorkshopsPage = () => {
     axios
     .get(url, 
     {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      withCredentials: true
     })
     .then((response) => { /*
       setWorkshops(response.data.data);
@@ -306,9 +304,7 @@ const WorkshopsPage = () => {
                       `https://skillitgh-lms.onrender.com/api/v1/workshops/${selectedWorkshop._id}/register`, 
                       {}, 
                       {
-                        headers: {
-                          Authorization: `Bearer ${localStorage.getItem("token")}`
-                        }
+                        withCredentials: true
                       }
                     )
                     .then((response) => {
@@ -390,9 +386,7 @@ const WorkshopsPage = () => {
                         `https://skillitgh-lms.onrender.com/api/v1/workshops/${unregisterWorkshop._id}/unregister`,
                         {},
                         {
-                          headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                          },
+                          withCredentials: true
                         }
                       )
                       .then(() => {

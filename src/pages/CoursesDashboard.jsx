@@ -41,9 +41,7 @@ const CoursesDashboard = () => {
 
     axios
       .get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        withCredentials: true
       })
       .then((response) => {
         const data = response.data.courses;
@@ -160,9 +158,7 @@ const CoursesDashboard = () => {
                       `https://skillitgh-lms.onrender.com/api/v1/dashboard/${selectedCourse._id}/register`, 
                       {}, 
                       {
-                        headers: {
-                          Authorization: `Bearer ${localStorage.getItem("token")}`
-                        }
+                        withCredentials: true
                       }
                     )
                     .then((response) => {
