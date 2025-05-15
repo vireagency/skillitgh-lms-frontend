@@ -1,82 +1,70 @@
 // src/pages/ManageUsers.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
-// import { Dialog } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 
 const API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/users";
-const api = "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile";
+const PROFILE_API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile";
 const token = localStorage.getItem("token");
-// const data = response.data.users;
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [updateUser, setUpdateUser] = useState(null);
-  const [deleteUser, setDeleteUser] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  
+
+  // Fetch users
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(API, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUsers(response.data.users);
+    } catch (err) {
+      console.error("Failed to fetch users:", err);
+    }
+  };
 
   useEffect(() => {
-    axios.get(API,
-      {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then((response) => {
-    setUsers(response.data.users);
-    console.log(response.data.users);
-    }
-    )
+    fetchUsers();
   }, []);
 
-  // const fetchUsers = async () => {
-  //   try {
-  //      await axios.get(API, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     setUsers(data);
-  //   } catch (err) {
-  //     console.error("Failed to fetch users:", err);
-  //   }
-  // };
-
-  useEffect(() => {
-    axios.patch(API,
-      {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then((response) => {
-    setUpdateUser(response.data.users);
-    console.log(response.data.users);
-    }
-    )
-  }, []);
-
-  useEffect(() => {
-    axios.delete(API,
-      {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then((response) => {
-    setDeleteUser(response.data.users);
-    console.log(response.data.users);
-    }
-    )
-  }, []);
-
+  // Filter users by search
   const filteredUsers = users.filter((user) =>
     user.firstName.toLowerCase().includes(search.toLowerCase()) ||
     user.lastName.toLowerCase().includes(search.toLowerCase()) ||
     user.email.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Handle update
+  const handleUpdate = async () => {
+    try {
+      await axios.patch(`${PROFILE_API}/${updateUser._id}`, updateUser, {
+        withCredentials: true,
+      });
+      setShowUpdateModal(false);
+      setUpdateUser(null);
+      fetchUsers();
+    } catch (err) {
+      console.error("Update error:", err);
+    }
+  };
+
+  // Handle delete
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`${API}/${updateUser._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setShowDeleteModal(false);
+      setUpdateUser(null);
+      fetchUsers();
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
+  };
 
   return (
     <div className="p-4">
@@ -101,7 +89,7 @@ export default function ManageUsers() {
           {filteredUsers.map((user) => (
             <tr key={user._id} className="border-t">
               <td className="p-2">{user.firstName}</td>
-                <td className="p-2">{user.lastName}</td>
+              <td className="p-2">{user.lastName}</td>
               <td className="p-2">{user.email}</td>
               <td className="p-2">{user.role}</td>
               <td className="p-2 flex gap-2">
@@ -130,15 +118,15 @@ export default function ManageUsers() {
         </tbody>
       </table>
 
-      {/* Role Modal */}
-    {showUpdateModal &&
+      {/* Update Modal */}
+      {showUpdateModal && (
         <div className="bg-white p-6 rounded-lg shadow max-w-sm mx-auto">
           <h3 className="text-lg font-medium mb-4">
-            Update information for {updateUser?.name}
+            Update information for {updateUser?.firstName} {updateUser?.lastName}
           </h3>
           <Input
             placeholder="First Name"
-            value={updateUser?.firstName}
+            value={updateUser?.firstName || ""}
             onChange={(e) =>
               setUpdateUser({ ...updateUser, firstName: e.target.value })
             }
@@ -146,7 +134,7 @@ export default function ManageUsers() {
           />
           <Input
             placeholder="Last Name"
-            value={updateUser?.lastName}
+            value={updateUser?.lastName || ""}
             onChange={(e) =>
               setUpdateUser({ ...updateUser, lastName: e.target.value })
             }
@@ -154,7 +142,7 @@ export default function ManageUsers() {
           />
           <Input
             placeholder="Email"
-            value={updateUser?.email}
+            value={updateUser?.email || ""}
             onChange={(e) =>
               setUpdateUser({ ...updateUser, email: e.target.value })
             }
@@ -162,7 +150,7 @@ export default function ManageUsers() {
           />
           <Input
             placeholder="Role"
-            value={updateUser?.role}
+            value={updateUser?.role || ""}
             onChange={(e) =>
               setUpdateUser({ ...updateUser, role: e.target.value })
             }
@@ -172,26 +160,12 @@ export default function ManageUsers() {
             <Button onClick={() => setShowUpdateModal(false)} variant="outline">
               Cancel
             </Button>
-            <Button
-              onClick={() => {
-                // Call API to update user
-                axios.patch(`${api}/${updateUser._id}`, updateUser, {
-                  withCredentials: true
-                })
-                  .then(() => {
-                    setShowUpdateModal(false);
-                    setUpdateUser(null);
-                    // Optionally, refresh the user list
-                    // fetchUsers();
-                  })
-                  .catch((err) => console.error("Update error:", err));
-              }}
-            >
+            <Button onClick={handleUpdate}>
               Update
             </Button>
           </div>
         </div>
-      }
+      )}
 
       {/* Delete Modal */}
       {showDeleteModal && (
@@ -200,26 +174,13 @@ export default function ManageUsers() {
             Confirm Deletion
           </h3>
           <p className="mb-4">
-            Are you sure you want to delete <strong>{updateUser?.name}</strong>?
+            Are you sure you want to delete <strong>{updateUser?.firstName} {updateUser?.lastName}</strong>?
           </p>
           <div className="flex gap-2 justify-end">
             <Button onClick={() => setShowDeleteModal(false)} variant="outline">
               Cancel
             </Button>
-            <Button onClick={() => {
-                // Call API to delete user
-                axios.delete(`${API}/${updateUser._id}`, {
-                  headers: { Authorization: `Bearer ${token}` },
-                })
-                  .then(() => {
-                    setShowDeleteModal(false);
-                    setUpdateUser(null);
-                    // Optionally, refresh the user list
-                    // fetchUsers();
-                  })
-                  .catch((err) => console.error("Delete error:", err));
-              }}
-            >
+            <Button onClick={handleDelete}>
               Delete
             </Button>
           </div>
