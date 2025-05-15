@@ -4,11 +4,14 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "../index.css";
 import { FallingLines } from 'react-loader-spinner';
+import { Pen } from 'lucide-react';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState(null);
   const [formData, setFormData] = useState({});
+  const [imageFile, setImageFile] = useState(null);
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -28,26 +31,47 @@ const ProfilePage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-    axios.put('https://skillitgh-lms.onrender.com/api/v1/dashboard/profile', formData)
-      .then((response) => {
-        console.log('Profile updated:', response.data.user);
-        setProfile(response.data.user);
-        setIsEditing(false);
-      })
-      .catch((error) => {
-        const msg = error.response?.data?.message || "An error occurred. Try again.";
-        toast.error(msg, {
-            position: "top-right",
-            autoClose: 2500,
-        });
-        console.error('Error updating profile:', error);
-      });
-    setProfile(formData);
+  const handleSave = async () => {
+  try {
+    const formDataToSend = new FormData();
+
+    // Append form data
+    formDataToSend.append("firstName", formData.firstName);
+    formDataToSend.append("lastName", formData.lastName);
+    formDataToSend.append("phoneNumber", formData.phoneNumber);
+    formDataToSend.append("gender", formData.gender);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("location", formData.location);
+
+    // Append image file if selected
+    if (imageFile) {
+      formDataToSend.append("userImage", imageFile);
+    }
+
+    const response = await axios.put(
+      "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile",
+      formDataToSend,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    setProfile(response.data.user);
+    toast.success("Profile updated successfully!");
     setIsEditing(false);
-    console.log('Saved profile:', formData);
-  };
+  } catch (error) {
+    const msg = error.response?.data?.message || "An error occurred. Try again.";
+    toast.error(msg, {
+      position: "top-right",
+      autoClose: 2500,
+    });
+    console.error("Error updating profile:", error);
+  }
+};
+
 
   if (!profile) return <div className='flex justify-center items-center'><FallingLines
     color="#4fa94d"
@@ -66,12 +90,37 @@ const ProfilePage = () => {
         
       </div>
       <div className="flex items-center justify-between space-x-4 mb-6">
-        <div className='flex'>
-          <img src={profile.userImage} alt="avatar" className="w-16 h-16 rounded-full" />
-          <span>
+        <div className="flex items-center space-x-4">
+          <div className="relative w-16 h-16">
+            <img
+              src={imageFile ? URL.createObjectURL(imageFile) : profile.userImage}
+              alt="avatar"
+              className="w-16 h-16 rounded-full object-cover border"
+            />
+
+            {isEditing && (
+              <>
+                <label
+                  htmlFor="profileImageInput"
+                  className="absolute bottom-0 right-0 p-1 rounded-full cursor-pointer hover:bg-green-700"
+                >
+                  <Pen className="text-white text-xs" />
+                </label>
+                <input
+                  id="profileImageInput"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setImageFile(e.target.files[0])}
+                  className="hidden"
+                />
+              </>
+            )}
+          </div>
+
+          <div>
             <h2 className="text-lg font-semibold">{profile.firstName}</h2>
             <p className="text-sm text-gray-500">{profile.email}</p>
-          </span>
+          </div>
         </div>
         {!isEditing && (
           <button
@@ -86,6 +135,25 @@ const ProfilePage = () => {
       {isEditing ? (
         <>
           <div className="grid grid-cols-2 gap-6">
+            {/* {imageFile && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-500">Image Preview:</p>
+                <img
+                  src={URL.createObjectURL(imageFile)}
+                  alt="Preview"
+                  className="w-16 h-16 rounded-full mt-1 border"
+                />
+              </div>
+            )} */}
+
+            {/* <div className='flex'>
+              <img src={profile.userImage} alt="avatar" className="w-16 h-16 rounded-full" />
+              <span>
+                <h2 className="text-lg font-semibold">{profile.firstName}</h2>
+                <p className="text-sm text-gray-500">{profile.email}</p>
+              </span>
+            </div> */}
+
             <div>
               <label className="block text-sm font-medium">First Name</label>
               <input name="firstName" type="text" value={formData.firstName} onChange={handleChange} className="w-full p-2 border rounded" />
