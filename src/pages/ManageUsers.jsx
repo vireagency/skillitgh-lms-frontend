@@ -1,11 +1,12 @@
 // src/pages/ManageUsers.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Dialog } from "@/Components/ui/dialog";
+// import { Dialog } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 
 const API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/users";
+const api = "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile";
 const token = localStorage.getItem("token");
 // const data = response.data.users;
 
@@ -130,21 +131,70 @@ export default function ManageUsers() {
       </table>
 
       {/* Role Modal */}
-      <Dialog open={showUpdateModal} onOpenChange={setShowUpdateModal}>
+    {showUpdateModal &&
         <div className="bg-white p-6 rounded-lg shadow max-w-sm mx-auto">
           <h3 className="text-lg font-medium mb-4">
             Update information for {updateUser?.name}
           </h3>
-          <div className="flex gap-2">
-            <Button onClick={() => handleRoleUpdate("user")}>User</Button>
-            {/* <Button onClick={() => handleRoleUpdate("instructor")}>Instructor</Button> */}
-            <Button onClick={() => handleRoleUpdate("admin")}>Admin</Button>
+          <Input
+            placeholder="First Name"
+            value={updateUser?.firstName}
+            onChange={(e) =>
+              setUpdateUser({ ...updateUser, firstName: e.target.value })
+            }
+            className="mb-4"
+          />
+          <Input
+            placeholder="Last Name"
+            value={updateUser?.lastName}
+            onChange={(e) =>
+              setUpdateUser({ ...updateUser, lastName: e.target.value })
+            }
+            className="mb-4"
+          />
+          <Input
+            placeholder="Email"
+            value={updateUser?.email}
+            onChange={(e) =>
+              setUpdateUser({ ...updateUser, email: e.target.value })
+            }
+            className="mb-4"
+          />
+          <Input
+            placeholder="Role"
+            value={updateUser?.role}
+            onChange={(e) =>
+              setUpdateUser({ ...updateUser, role: e.target.value })
+            }
+            className="mb-4"
+          />
+          <div className="flex gap-2 justify-end">
+            <Button onClick={() => setShowUpdateModal(false)} variant="outline">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                // Call API to update user
+                axios.patch(`${api}/${updateUser._id}`, updateUser, {
+                  headers: { Authorization: `Bearer ${token}` },
+                })
+                  .then(() => {
+                    setShowUpdateModal(false);
+                    setUpdateUser(null);
+                    // Optionally, refresh the user list
+                    // fetchUsers();
+                  })
+                  .catch((err) => console.error("Update error:", err));
+              }}
+            >
+              Update
+            </Button>
           </div>
         </div>
-      </Dialog>
+      }
 
       {/* Delete Modal */}
-      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+      {showDeleteModal && (
         <div className="bg-white p-6 rounded-lg shadow max-w-sm mx-auto">
           <h3 className="text-lg font-medium mb-4 text-red-600">
             Confirm Deletion
@@ -156,12 +206,25 @@ export default function ManageUsers() {
             <Button onClick={() => setShowDeleteModal(false)} variant="outline">
               Cancel
             </Button>
-            <Button onClick={setDeleteUser} variant="destructive">
+            <Button onClick={() => {
+                // Call API to delete user
+                axios.delete(`${API}/${updateUser._id}`, {
+                  headers: { Authorization: `Bearer ${token}` },
+                })
+                  .then(() => {
+                    setShowDeleteModal(false);
+                    setUpdateUser(null);
+                    // Optionally, refresh the user list
+                    // fetchUsers();
+                  })
+                  .catch((err) => console.error("Delete error:", err));
+              }}
+            >
               Delete
             </Button>
           </div>
         </div>
-      </Dialog>
+      )}
     </div>
   );
 }
