@@ -5,16 +5,18 @@ import { Dialog } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 
-const API = "https://skillitgh-lms.onrender.com/api/dashboard/users";
+const API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/users";
 const token = localStorage.getItem("token");
 // const data = response.data.users;
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [updateUser, setUpdateUser] = useState(null);
+  const [deleteUser, setDeleteUser] = useState(null);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  
 
   useEffect(() => {
     axios.get(API,
@@ -30,42 +32,44 @@ export default function ManageUsers() {
     )
   }, []);
 
-  const fetchUsers = async () => {
-    try {
-       await axios.get(API, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUsers(data);
-    } catch (err) {
-      console.error("Failed to fetch users:", err);
-    }
-  };
+  // const fetchUsers = async () => {
+  //   try {
+  //      await axios.get(API, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     setUsers(data);
+  //   } catch (err) {
+  //     console.error("Failed to fetch users:", err);
+  //   }
+  // };
 
-  const handleRoleUpdate = async (role) => {
-    try {
-      await axios.patch(
-        `${API}/${selectedUser._id}`,
-        { role },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      fetchUsers();
-      setShowRoleModal(false);
-    } catch (err) {
-      console.error("Failed to update role:", err);
+  useEffect(() => {
+    axios.patch(API,
+      {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then((response) => {
+    setUpdateUser(response.data.users);
+    console.log(response.data.users);
     }
-  };
+    )
+  }, []);
 
-  const handleDeleteUser = async () => {
-    try {
-      await axios.delete(`${API}/${selectedUser._id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchUsers();
-      setShowDeleteModal(false);
-    } catch (err) {
-      console.error("Failed to delete user:", err);
+  useEffect(() => {
+    axios.delete(API,
+      {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then((response) => {
+    setDeleteUser(response.data.users);
+    console.log(response.data.users);
     }
-  };
+    )
+  }, []);
 
   const filteredUsers = users.filter((user) =>
     user.firstName.toLowerCase().includes(search.toLowerCase()) ||
@@ -103,17 +107,17 @@ export default function ManageUsers() {
                 <Button
                   size="sm"
                   onClick={() => {
-                    setSelectedUser(user);
-                    setShowRoleModal(true);
+                    setUpdateUser(user);
+                    setShowUpdateModal(true);
                   }}
                 >
-                  Change Role
+                  Update
                 </Button>
                 <Button
                   size="sm"
                   variant="destructive"
                   onClick={() => {
-                    setSelectedUser(user);
+                    setUpdateUser(user);
                     setShowDeleteModal(true);
                   }}
                 >
@@ -126,10 +130,10 @@ export default function ManageUsers() {
       </table>
 
       {/* Role Modal */}
-      <Dialog open={showRoleModal} onOpenChange={setShowRoleModal}>
+      <Dialog open={showUpdateModal} onOpenChange={setShowUpdateModal}>
         <div className="bg-white p-6 rounded-lg shadow max-w-sm mx-auto">
           <h3 className="text-lg font-medium mb-4">
-            Change Role for {selectedUser?.name}
+            Update information for {updateUser?.name}
           </h3>
           <div className="flex gap-2">
             <Button onClick={() => handleRoleUpdate("user")}>User</Button>
@@ -146,13 +150,13 @@ export default function ManageUsers() {
             Confirm Deletion
           </h3>
           <p className="mb-4">
-            Are you sure you want to delete <strong>{selectedUser?.name}</strong>?
+            Are you sure you want to delete <strong>{updateUser?.name}</strong>?
           </p>
           <div className="flex gap-2 justify-end">
             <Button onClick={() => setShowDeleteModal(false)} variant="outline">
               Cancel
             </Button>
-            <Button onClick={handleDeleteUser} variant="destructive">
+            <Button onClick={setDeleteUser} variant="destructive">
               Delete
             </Button>
           </div>
