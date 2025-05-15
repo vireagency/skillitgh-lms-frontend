@@ -5,8 +5,9 @@ import { Dialog } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 
-const API = "https://skillitgh-lms.onrender.com/api/admin/users";
-const token = localStorage.getItem("adminToken");
+const API = "https://skillitgh-lms.onrender.com/api/dashboard/users";
+const token = localStorage.getItem("token");
+const data = response.data.users;
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
@@ -21,7 +22,7 @@ export default function ManageUsers() {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await axios.get(API, {
+       await axios.get(API, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(data);
@@ -57,7 +58,8 @@ export default function ManageUsers() {
   };
 
   const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase()) ||
+    user.firstName.toLowerCase().includes(search.toLowerCase()) ||
+    user.lastName.toLowerCase().includes(search.toLowerCase()) ||
     user.email.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -73,7 +75,8 @@ export default function ManageUsers() {
       <table className="w-full border text-sm">
         <thead>
           <tr className="bg-gray-100">
-            <th className="text-left p-2">Name</th>
+            <th className="text-left p-2">First Name</th>
+            <th className="text-left p-2">Last Name</th>
             <th className="text-left p-2">Email</th>
             <th className="text-left p-2">Role</th>
             <th className="text-left p-2">Actions</th>
@@ -82,7 +85,8 @@ export default function ManageUsers() {
         <tbody>
           {filteredUsers.map((user) => (
             <tr key={user._id} className="border-t">
-              <td className="p-2">{user.name}</td>
+              <td className="p-2">{user.firstName}</td>
+                <td className="p-2">{user.lastName}</td>
               <td className="p-2">{user.email}</td>
               <td className="p-2">{user.role}</td>
               <td className="p-2 flex gap-2">
@@ -118,8 +122,8 @@ export default function ManageUsers() {
             Change Role for {selectedUser?.name}
           </h3>
           <div className="flex gap-2">
-            <Button onClick={() => handleRoleUpdate("student")}>Student</Button>
-            <Button onClick={() => handleRoleUpdate("instructor")}>Instructor</Button>
+            <Button onClick={() => handleRoleUpdate("user")}>User</Button>
+            {/* <Button onClick={() => handleRoleUpdate("instructor")}>Instructor</Button> */}
             <Button onClick={() => handleRoleUpdate("admin")}>Admin</Button>
           </div>
         </div>
