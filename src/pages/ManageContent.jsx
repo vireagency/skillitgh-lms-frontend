@@ -13,7 +13,7 @@ const mockWorkshops = [
   { id: 2, title: "Tailwind Crash Course", published: false },
 ];
 
-const ManageContentTab = () => {
+const ManageContent = () => {
   const [tab, setTab] = useState("courses");
   const [courses, setCourses] = useState(mockCourses);
   const [workshops, setWorkshops] = useState(mockWorkshops);
@@ -97,5 +97,5 @@ const ManageContentTab = () => {
   );
 };
 
-export default ManageContentTab;
+export default ManageContent;
 
