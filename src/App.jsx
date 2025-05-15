@@ -16,6 +16,7 @@ import ProfilePage from "./pages/ProfilePage";
 import AdminDashboardLayout from "./routes/admin-dashboard/adminDashboardLayout";
 import AdminDashboard from "./pages/AdminDashboard";
 import ManageUsers from "./pages/ManageUsers";
+import ManageContent from "./pages/ManageContent";
 
 
 const App = () => {
@@ -26,7 +27,7 @@ const App = () => {
       <Route path="/admin-dashboard/*" element={<AdminDashboardLayout />} >
         <Route index element={<AdminDashboard />} />
         <Route path="users" element={<ManageUsers />} />
-        <Route path="content" element={<AdminDashboard />} />
+        <Route path="content" element={<ManageContent />} />
       </Route>
       
       {/* ✅ Protected Routes Start */}
