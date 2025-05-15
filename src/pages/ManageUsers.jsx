@@ -7,7 +7,7 @@ import { Input } from "@/Components/ui/input";
 
 const API = "https://skillitgh-lms.onrender.com/api/dashboard/users";
 const token = localStorage.getItem("token");
-const data = response.data.users;
+// const data = response.data.users;
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
@@ -17,7 +17,17 @@ export default function ManageUsers() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
-    fetchUsers();
+    axios.get(API,
+      {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then((response) => {
+    setUsers(response.data.users);
+    console.log(response.data.users);
+    }
+    )
   }, []);
 
   const fetchUsers = async () => {
