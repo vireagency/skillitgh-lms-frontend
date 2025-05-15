@@ -10,7 +10,7 @@ export default function RegisteredCoursesCard() {
     const fetchCourses = async () => {
       try {
         const { data } = await axios.get(
-          "https://skillitgh-lms.onrender.com/api/v1/dashboard/registeredUsers",
+          "https://skillitgh-lms.onrender.com/api/v1/dashboard/registeredCourses",
           { withCredentials: true }
         );
         setCourses(data);

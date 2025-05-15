@@ -6,7 +6,7 @@ import { Input } from "@/Components/ui/input";
 
 const API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/users";
 const PROFILE_API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile";
-const token = localStorage.getItem("token");
+
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
@@ -19,7 +19,7 @@ export default function ManageUsers() {
   const fetchUsers = async () => {
     try {
       const response = await axios.get(API, {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
       });
       setUsers(response.data.users);
     } catch (err) {
@@ -56,7 +56,7 @@ export default function ManageUsers() {
   const handleDelete = async () => {
     try {
       await axios.delete(`${API}/${updateUser._id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
       });
       setShowDeleteModal(false);
       setUpdateUser(null);

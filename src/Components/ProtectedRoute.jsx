@@ -21,7 +21,7 @@ const ProtectedRoute = ({ children }) => {
     const checkAuth = async () => {
       try {
         const res = await axios.get(
-          "https://skillitgh-lms.onrender.com/api/v1/auth/check-session",
+          "https://skillitgh-lms.onrender.com/api/v1/auth/signin",
           {
             withCredentials: true,
           }
