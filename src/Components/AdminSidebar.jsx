@@ -78,7 +78,7 @@ export function AdminSidebar() {
     setShowModal(false);
     try {
       await axios.post(
-        "https://skillitgh-lms.onrender.com/api/v1/auth/logout",
+        "https://skillitgh-lms.onrender.com/api/v1/auth/signout",
         {},
         { withCredentials: true }
       );
