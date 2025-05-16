@@ -108,12 +108,27 @@ function AdminDashboardLayout() {
             {/* Notification Bell */}
             <div className="relative" ref={notificationPanelRef}>
               <Bell
-                className={`w-8 h-8 cursor-pointer transition-colors ${showNotifications ? "text-green-600" : ""}`}
+                className={`w-8 h-8 cursor-pointer transition-colors duration-150 ${showNotifications ? "text-green-600 scale-110" : "hover:text-green-500"}`}
                 onClick={handleNotificationsClick}
+                aria-label="Show notifications"
+                tabIndex={0}
+                onKeyDown={e => { if (e.key === "Enter") handleNotificationsClick(); }}
               />
               {showNotifications && (
-                <div className="absolute right-0 mt-2 w-64 bg-white shadow-xl rounded-xl z-50 border border-gray-100 animate-fade-in">
-                  <NotificationPanel />
+                <div className="absolute right-0 mt-3 w-80 max-w-xs bg-white shadow-2xl rounded-2xl z-50 border border-gray-100 animate-fade-in overflow-hidden">
+                  <div className="p-4 border-b flex items-center justify-between bg-gray-50">
+                    <span className="font-semibold text-gray-800">Notifications</span>
+                    <button
+                      className="text-gray-400 hover:text-red-500 transition-colors"
+                      onClick={() => setShowNotifications(false)}
+                      aria-label="Close notifications"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    <NotificationPanel />
+                  </div>
                 </div>
               )}
             </div>
@@ -121,13 +136,27 @@ function AdminDashboardLayout() {
             <div className="relative" ref={profilePanelRef}>
               <img
                 src={profileImage}
-                alt="avatar"
-                className={`w-10 h-10 rounded-full border-2 cursor-pointer object-cover transition-shadow ${showProfilePanel ? "ring-2 ring-green-500" : ""}`}
+                alt="Admin avatar"
+                className={`w-10 h-10 rounded-full border-2 cursor-pointer object-cover transition-shadow duration-150 ${showProfilePanel ? "ring-2 ring-green-500 shadow-lg" : "hover:ring-2 hover:ring-green-300"}`}
                 onClick={handleProfileClick}
+                tabIndex={0}
+                onKeyDown={e => { if (e.key === "Enter") handleProfileClick(); }}
               />
               {showProfilePanel && (
-                <div className="absolute right-0 mt-2 w-80 bg-white shadow-xl rounded-xl z-50 border border-gray-100 animate-fade-in">
-                  <AdminProfilePanel />
+                <div className="absolute right-0 mt-3 w-96 max-w-sm bg-white shadow-2xl rounded-2xl z-50 border border-gray-100 animate-fade-in overflow-hidden">
+                  <div className="p-4 border-b flex items-center justify-between bg-gray-50">
+                    <span className="font-semibold text-gray-800">Admin Profile</span>
+                    <button
+                      className="text-gray-400 hover:text-red-500 transition-colors"
+                      onClick={() => setShowProfilePanel(false)}
+                      aria-label="Close profile"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto">
+                    <AdminProfilePanel />
+                  </div>
                 </div>
               )}
             </div>

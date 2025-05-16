@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/Components/ui/card";
 import { Input } from "@/Components/ui/input";
 import axios from "axios";
 
-const API_BASE = "https://skillitgh-lms.onrender.com/api/v1/dashboard";
+const API_BASE = "https://skillitgh-lms.onrender.com/api/v1";
 
 const ManageContent = () => {
   const [tab, setTab] = useState("courses");
