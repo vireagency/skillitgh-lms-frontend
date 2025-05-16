@@ -17,16 +17,21 @@ export default function RegisteredCoursesCard() {
   const [loading, setLoading] = useState(true);
   const [modalCourse, setModalCourse] = useState(null);
   const [showAll, setShowAll] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+
+  
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const res = await axios.get(
-          "https://skillitgh-lms.onrender.com/api/v1/dashboard/registeredCourses",
+          "https://skillitgh-lms.onrender.com/api/v1/dashboard/students",
           { withCredentials: true }
         );
-        setCourses(res.data.courses);
-        console.log(res.data.courses);
+        setCourses(res.data.course);
+        setTotalCount(res.data.totalCount);
+        console.log(res.data);
+        console.log(totalCount);
       } catch (err) {
         console.error("Failed to fetch courses:", err);
       } finally {
@@ -41,6 +46,7 @@ export default function RegisteredCoursesCard() {
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
       <h2 className="text-lg font-semibold mb-4">Registered Courses</h2>
+       <h3 className="text-sm text-gray-500 mb-2">Total Number of Students: {totalCount}</h3> 
 
       {loading ? (
         <div className="flex justify-center items-center h-full">
@@ -71,18 +77,18 @@ export default function RegisteredCoursesCard() {
             >
               <span className="font-medium">{course.title}</span>
               <div className="flex space-x-1">
-                {(course.attendees || []).slice(0, 4).map((att, i) => (
+                {(course.registeredUsers || []).slice(0, 4).map((reg, i) => (
                   <span key={i} className="text-xl">
                     <img
-                      src={att.userImage}
-                      alt={att.name || "Attendee"}
+                      src={reg.userImage}
+                      alt={reg.name || "Attendee"}
                       className="w-8 h-8 rounded-full border"
                     />
                   </span>
                 ))}
-                {course.attendees?.length > 4 && (
+                {course.registeredUsers?.length > 4 && (
                   <span className="text-xs text-gray-600 ml-2">
-                    +{course.attendees.length - 4} more
+                    +{course.registeredUsers.length - 4} more
                   </span>
                 )}
               </div>
@@ -115,27 +121,27 @@ export default function RegisteredCoursesCard() {
             <h3 className="text-xl font-semibold mb-2">{modalCourse.title}</h3>
             <p className="mb-4 text-gray-600">{modalCourse.description}</p>
             <div>
-              <h4 className="font-semibold mb-2">Attendees</h4>
-              {modalCourse.attendees && modalCourse.attendees.length > 0 ? (
+              <h4 className="font-semibold mb-2">Registered Users</h4>
+              {modalCourse.registeredUsers && modalCourse.registeredUsers.length > 0 ? (
                 <ul className="space-y-2 max-h-60 overflow-y-auto">
-                  {modalCourse.attendees.map((att, i) => (
+                  {modalCourse.registeredUsers.map((reg, i) => (
                     <li key={i} className="flex items-center gap-3">
                       <img
-                        src={att.userImage}
-                        alt={att.name || "Attendee"}
+                        src={reg.userImage}
+                        alt={reg.name || "Attendee"}
                         className="w-10 h-10 rounded-full border"
                       />
                       <div>
                         <div className="font-medium">
-                          {att.firstName || "No Name"} <span>{att.lastName}</span>
+                          {reg.firstName || "No Name"} <span>{reg.lastName}</span>
                         </div>
-                        <div className="text-xs text-gray-500">{att.email || ""}</div>
+                        <div className="text-xs text-gray-500">{reg.email || ""}</div>
                       </div>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <div className="text-gray-500">No attendees yet.</div>
+                <div className="text-gray-500">No registered users yet.</div>
               )}
             </div>
           </div>
