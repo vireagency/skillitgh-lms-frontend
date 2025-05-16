@@ -8,7 +8,17 @@ import Textarea from "@/Components/ui/textarea";
 
 const API_BASE = "https://skillitgh-lms.onrender.com/api/v1";
 
-const initialFormState = { title: "", description: "", image: null };
+const initialFormState = {
+  title: "",
+  description: "",
+  workshopImage: null,
+  date: "",
+  location: "",
+  facilitatorName: "",
+  facilitatorEmail: "",
+  duration: "",
+  resource: "",
+};
 
 const ManageContent = () => {
   const [tab, setTab] = useState("courses");
@@ -24,6 +34,8 @@ const ManageContent = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [updateData, setUpdateData] = useState(initialFormState);
   const [createData, setCreateData] = useState(initialFormState);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [detailsWorkshop, setDetailsWorkshop] = useState(null);
 
   // Fetch courses and workshops (upcoming & previous)
   useEffect(() => {
@@ -32,8 +44,8 @@ const ManageContent = () => {
       try {
         const [coursesRes, upcomingRes, previousRes] = await Promise.all([
           axios.get(`${API_BASE}/courses`, { withCredentials: true }),
-          axios.get(`${API_BASE}/workshops?filter=upcoming`, { withCredentials: true }),
-          axios.get(`${API_BASE}/workshops?filter=previous`, { withCredentials: true }),
+          axios.get(`${API_BASE}/workshops/upcoming`, { withCredentials: true }),
+          axios.get(`${API_BASE}/workshops/previous`, { withCredentials: true }),
         ]);
         setCourses(coursesRes.data.courses || []);
         setUpcomingWorkshops(upcomingRes.data.workshops || []);
@@ -78,12 +90,112 @@ const ManageContent = () => {
     setUpdateData({
       title: item.title || "",
       description: item.description || "",
-      image: null,
+      workshopImage: item.workshopImage || null,
+      date: item.date ? item.date.slice(0, 10) : "",
+      location: item.location || "",
+      facilitatorName: item.facilitator?.name || "",
+      facilitatorEmail: item.facilitator?.email || "",
+      duration: item.duration || "",
+      resource: item.resource || "",
     });
     setShowUpdateModal(true);
   };
 
-  // Update handler
+  // Publish/unpublish handler
+  const handleTogglePublish = async (id, type, published) => {
+    try {
+      await axios.put(
+        `${API_BASE}/${type}/${id}`,
+        { published: !published },
+        { withCredentials: true }
+      );
+      if (type === "courses") {
+        setCourses((prev) =>
+          prev.map((item) =>
+            (item.id === id || item._id === id)
+              ? { ...item, published: !item.published }
+              : item
+          )
+        );
+      } else {
+        setUpcomingWorkshops((prev) =>
+          prev.map((item) =>
+            (item.id === id || item._id === id)
+              ? { ...item, published: !item.published }
+              : item
+          )
+        );
+      }
+    } catch (err) {
+      console.error(`Failed to update ${type.slice(0, -1)}:`, err);
+    }
+  };
+
+  // --- CREATE HANDLER ---
+  const handleCreate = async () => {
+    const type = tab;
+    if (!createData.title.trim()) return;
+    try {
+      let payload;
+      let headers = {};
+      if (type === "courses") {
+        if (createData.image) {
+          payload = new FormData();
+          payload.append("title", createData.title);
+          payload.append("description", createData.description);
+          payload.append("image", createData.image);
+          headers["Content-Type"] = "multipart/form-data";
+        } else {
+          payload = {
+            title: createData.title,
+            description: createData.description,
+          };
+        }
+      } else {
+        // Workshops
+        if (createData.workshopImage) {
+          payload = new FormData();
+          payload.append("title", createData.title);
+          payload.append("description", createData.description);
+          payload.append("date", createData.date);
+          payload.append("location", createData.location);
+          payload.append("duration", createData.duration);
+          payload.append("resource", createData.resource);
+          payload.append("facilitatorName", createData.facilitatorName);
+          payload.append("facilitatorEmail", createData.facilitatorEmail);
+          payload.append("workshopImage", createData.workshopImage);
+          headers["Content-Type"] = "multipart/form-data";
+        } else {
+          payload = {
+            title: createData.title,
+            description: createData.description,
+            date: createData.date,
+            location: createData.location,
+            duration: createData.duration,
+            resource: createData.resource,
+            facilitatorName: createData.facilitatorName,
+            facilitatorEmail: createData.facilitatorEmail,
+          };
+        }
+      }
+      const res = await axios.post(
+        `${API_BASE}/${type}`,
+        payload,
+        { withCredentials: true, ...headers }
+      );
+      if (type === "courses") {
+        setCourses((prev) => [...prev, res.data.course || res.data.courses?.[0]]);
+      } else {
+        setUpcomingWorkshops((prev) => [...prev, res.data.workshop || res.data.workshops?.[0]]);
+      }
+      setShowCreateModal(false);
+      setCreateData(initialFormState);
+    } catch (err) {
+      console.error(`Failed to create ${type.slice(0, -1)}:`, err);
+    }
+  };
+
+  // --- UPDATE HANDLER ---
   const handleUpdate = async () => {
     if (!selectedItem) return;
     const { id, _id, type } = selectedItem;
@@ -91,19 +203,47 @@ const ManageContent = () => {
     try {
       let payload;
       let headers = {};
-      if (updateData.image) {
-        payload = new FormData();
-        payload.append("title", updateData.title);
-        payload.append("description", updateData.description);
-        payload.append("image", updateData.image);
-        headers["Content-Type"] = "multipart/form-data";
+      if (type === "courses") {
+        if (updateData.image && updateData.image instanceof File) {
+          payload = new FormData();
+          payload.append("title", updateData.title);
+          payload.append("description", updateData.description);
+          payload.append("image", updateData.image);
+          headers["Content-Type"] = "multipart/form-data";
+        } else {
+          payload = {
+            title: updateData.title,
+            description: updateData.description,
+          };
+        }
       } else {
-        payload = {
-          title: updateData.title,
-          description: updateData.description,
-        };
+        // Workshops
+        if (updateData.workshopImage && updateData.workshopImage instanceof File) {
+          payload = new FormData();
+          payload.append("title", updateData.title);
+          payload.append("description", updateData.description);
+          payload.append("date", updateData.date);
+          payload.append("location", updateData.location);
+          payload.append("duration", updateData.duration);
+          payload.append("resource", updateData.resource);
+          payload.append("facilitatorName", updateData.facilitatorName);
+          payload.append("facilitatorEmail", updateData.facilitatorEmail);
+          payload.append("workshopImage", updateData.workshopImage);
+          headers["Content-Type"] = "multipart/form-data";
+        } else {
+          payload = {
+            title: updateData.title,
+            description: updateData.description,
+            date: updateData.date,
+            location: updateData.location,
+            duration: updateData.duration,
+            resource: updateData.resource,
+            facilitatorName: updateData.facilitatorName,
+            facilitatorEmail: updateData.facilitatorEmail,
+          };
+        }
       }
-      const res = await axios.patch(
+      const res = await axios.put(
         `${API_BASE}/${type}/${itemId}`,
         payload,
         { withCredentials: true, ...headers }
@@ -132,124 +272,357 @@ const ManageContent = () => {
     }
   };
 
-  // Publish/unpublish handler
-  const handleTogglePublish = async (id, type, published) => {
-    try {
-      await axios.patch(
-        `${API_BASE}/${type}/${id}`,
-        { published: !published },
-        { withCredentials: true }
-      );
-      if (type === "courses") {
-        setCourses((prev) =>
-          prev.map((item) =>
-            (item.id === id || item._id === id)
-              ? { ...item, published: !item.published }
-              : item
-          )
-        );
-      } else {
-        setUpcomingWorkshops((prev) =>
-          prev.map((item) =>
-            (item.id === id || item._id === id)
-              ? { ...item, published: !item.published }
-              : item
-          )
-        );
-      }
-    } catch (err) {
-      console.error(`Failed to update ${type.slice(0, -1)}:`, err);
-    }
-  };
-
-  // Create handler
-  const handleCreate = async () => {
-    const type = tab;
-    if (!createData.title.trim()) return;
-    try {
-      let payload;
-      let headers = {};
-      if (createData.image) {
-        payload = new FormData();
-        payload.append("title", createData.title);
-        payload.append("description", createData.description);
-        payload.append("image", createData.image);
-        headers["Content-Type"] = "multipart/form-data";
-      } else {
-        payload = {
-          title: createData.title,
-          description: createData.description,
-        };
-      }
-      const res = await axios.post(
-        `${API_BASE}/${type}`,
-        payload,
-        { withCredentials: true, ...headers }
-      );
-      if (type === "courses") {
-        setCourses((prev) => [...prev, res.data.course || res.data.courses?.[0]]);
-      } else {
-        setUpcomingWorkshops((prev) => [...prev, res.data.workshop || res.data.workshops?.[0]]);
-      }
-      setShowCreateModal(false);
-      setCreateData(initialFormState);
-    } catch (err) {
-      console.error(`Failed to create ${type.slice(0, -1)}:`, err);
-    }
-  };
-
-  const renderTable = (items, type, readOnly = false) => (
+  const renderTable = (items, type, readOnly = false, isPrevious = false) => (
     <table className="w-full table-auto text-left">
       <thead>
         <tr className="border-b">
-          <th className="p-2">Title</th>
-          <th className="p-2">Description</th>
+          <th className="p-2 w-72">Title</th>
+          <th className="p-2 w-60">Description</th>
           <th className="p-2">Image</th>
           <th className="p-2">Status</th>
           <th className="p-2">Actions</th>
         </tr>
       </thead>
       <tbody>
-        {items.map((item) => (
-          <tr key={item.id || item._id} className="border-b">
-            <td className="p-2">{item.title}</td>
-            <td className="p-2">{item.description}</td>
-            <td className="p-2">
-              {item.image && (
-                <img src={item.image} alt="cover" className="w-16 h-10 object-cover rounded" />
-              )}
-            </td>
-            <td className="p-2">
-              {item.published ? "Published" : "Unpublished"}
-            </td>
-            <td className="p-2 space-x-2">
-              {!readOnly && (
-                <>
-                  <Button size="sm" onClick={() => openUpdateModal(item, type)}>
-                    Edit
-                  </Button>
+        {items.map((item) => {
+          let imageUrl = item.image || item.workshopImage || item.courseImage || "";
+          return (
+            <tr key={item.id || item._id} className="border-b">
+              <td className="p-2">{item.title}</td>
+              <td className="p-2">{item.description}</td>
+              <td className="p-2">
+                {imageUrl && (
+                  <img
+                    src={imageUrl}
+                    alt="cover"
+                    className="w-16 h-10 object-cover rounded"
+                    style={{ background: "#f3f3f3" }}
+                  />
+                )}
+              </td>
+              <td className="p-2">
+                {item.published ? "Published" : "Unpublished"}
+              </td>
+              <td className="p-2 space-x-1">
+                {!readOnly && (
+                  <>
+                    <Button size="sm" onClick={() => openUpdateModal(item, type)}>
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => openDeleteModal(item, type)}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() =>
+                        handleTogglePublish(item.id || item._id, type, item.published)
+                      }
+                    >
+                      {item.published ? "Unpublish" : "Publish"}
+                    </Button>
+                  </>
+                )}
+                {isPrevious && (
                   <Button
                     size="sm"
-                    variant="destructive"
-                    onClick={() => openDeleteModal(item, type)}
+                    variant="outline"
+                    onClick={() => {
+                      setDetailsWorkshop(item);
+                      setShowDetailsModal(true);
+                    }}
                   >
-                    Delete
+                    View Details
                   </Button>
-                  <Button
-                    size="sm"
-                    onClick={() =>
-                      handleTogglePublish(item.id || item._id, type, item.published)
-                    }
-                  >
-                    {item.published ? "Unpublish" : "Publish"}
-                  </Button>
-                </>
-              )}
-            </td>
-          </tr>
-        ))}
+                )}
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
+  );
+
+  // --- MODALS ---
+
+  // Course Create Modal
+  const CourseCreateModal = (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
+        <h3 className="text-lg font-semibold mb-4">Create Course</h3>
+        <Input
+          className="mb-4"
+          placeholder="Title"
+          value={createData.title}
+          onChange={(e) => setCreateData({ ...createData, title: e.target.value })}
+        />
+        <Textarea
+          className="mb-4"
+          placeholder="Description"
+          value={createData.description}
+          onChange={(e) => setCreateData({ ...createData, description: e.target.value })}
+          rows={3}
+        />
+        <label className="block mb-4">
+          <span className="block mb-1 text-sm font-medium">Image</span>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={e => setCreateData({ ...createData, image: e.target.files[0] })}
+          />
+        </label>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => { setShowCreateModal(false); setCreateData(initialFormState); }}>
+            Cancel
+          </Button>
+          <Button onClick={handleCreate}>Create</Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Workshop Create Modal
+  const WorkshopCreateModal = (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
+        <h3 className="text-lg font-semibold mb-4">Create Workshop</h3>
+        <Input
+          className="mb-4"
+          placeholder="Title"
+          value={createData.title}
+          onChange={(e) => setCreateData({ ...createData, title: e.target.value })}
+        />
+        <Textarea
+          className="mb-4"
+          placeholder="Description"
+          value={createData.description}
+          onChange={(e) => setCreateData({ ...createData, description: e.target.value })}
+          rows={3}
+        />
+        <Input
+          className="mb-4"
+          type="date"
+          placeholder="Date"
+          value={createData.date}
+          onChange={(e) => setCreateData({ ...createData, date: e.target.value })}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Location"
+          value={createData.location}
+          onChange={(e) => setCreateData({ ...createData, location: e.target.value })}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Duration"
+          value={createData.duration}
+          onChange={(e) => setCreateData({ ...createData, duration: e.target.value })}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Resource Link"
+          value={createData.resource}
+          onChange={(e) => setCreateData({ ...createData, resource: e.target.value })}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Facilitator Name"
+          value={createData.facilitatorName}
+          onChange={(e) => setCreateData({ ...createData, facilitatorName: e.target.value })}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Facilitator Email"
+          value={createData.facilitatorEmail}
+          onChange={(e) => setCreateData({ ...createData, facilitatorEmail: e.target.value })}
+        />
+        <label className="block mb-4">
+          <span className="block mb-1 text-sm font-medium">Workshop Image</span>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={e => setCreateData({ ...createData, workshopImage: e.target.files[0] })}
+          />
+        </label>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => { setShowCreateModal(false); setCreateData(initialFormState); }}>
+            Cancel
+          </Button>
+          <Button onClick={handleCreate}>Create</Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Course Update Modal
+  const CourseUpdateModal = (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
+        <h3 className="text-lg font-semibold mb-4">Edit Course</h3>
+        <Input
+          className="mb-4"
+          placeholder="Title"
+          value={updateData.title}
+          onChange={(e) => setUpdateData({ ...updateData, title: e.target.value })}
+        />
+        <Textarea
+          className="mb-4"
+          placeholder="Description"
+          value={updateData.description}
+          onChange={(e) => setUpdateData({ ...updateData, description: e.target.value })}
+          rows={3}
+        />
+        <label className="block mb-4">
+          <span className="block mb-1 text-sm font-medium">Image</span>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={e => setUpdateData({ ...updateData, image: e.target.files[0] })}
+          />
+        </label>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setShowUpdateModal(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleUpdate}>Update</Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Workshop Update Modal
+  const WorkshopUpdateModal = (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
+        <h3 className="text-lg font-semibold mb-4">Edit Workshop</h3>
+        <Input
+          className="mb-4"
+          placeholder="Title"
+          value={updateData.title}
+          onChange={(e) => setUpdateData({ ...updateData, title: e.target.value })}
+        />
+        <Textarea
+          className="mb-4"
+          placeholder="Description"
+          value={updateData.description}
+          onChange={(e) => setUpdateData({ ...updateData, description: e.target.value })}
+          rows={3}
+        />
+        <Input
+          className="mb-4"
+          type="date"
+          placeholder="Date"
+          value={updateData.date}
+          onChange={(e) => setUpdateData({ ...updateData, date: e.target.value })}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Location"
+          value={updateData.location}
+          onChange={(e) => setUpdateData({ ...updateData, location: e.target.value })}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Duration"
+          value={updateData.duration}
+          onChange={(e) => setUpdateData({ ...updateData, duration: e.target.value })}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Resource Link"
+          value={updateData.resource}
+          onChange={(e) => setUpdateData({ ...updateData, resource: e.target.value })}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Facilitator Name"
+          value={updateData.facilitatorName}
+          onChange={(e) => setUpdateData({ ...updateData, facilitatorName: e.target.value })}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Facilitator Email"
+          value={updateData.facilitatorEmail}
+          onChange={(e) => setUpdateData({ ...updateData, facilitatorEmail: e.target.value })}
+        />
+        <label className="block mb-4">
+          <span className="block mb-1 text-sm font-medium">Workshop Image</span>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={e => setUpdateData({ ...updateData, workshopImage: e.target.files[0] })}
+          />
+        </label>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setShowUpdateModal(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleUpdate}>Update</Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Previous Workshop Details Modal
+  const PreviousWorkshopDetailsModal = detailsWorkshop && (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg relative">
+        <button
+          className="absolute top-2 right-3 text-2xl text-gray-400 hover:text-red-500"
+          onClick={() => setShowDetailsModal(false)}
+          aria-label="Close"
+        >
+          &times;
+        </button>
+        <h3 className="text-xl font-semibold mb-2">{detailsWorkshop.title}</h3>
+        <p className="mb-2 text-gray-600">{detailsWorkshop.description}</p>
+        {detailsWorkshop.workshopImage && (
+          <img
+            src={detailsWorkshop.workshopImage}
+            alt="Workshop"
+            className="w-full h-40 object-cover rounded mb-4"
+          />
+        )}
+        <div className="mb-2">
+          <strong>Date:</strong>{" "}
+          {detailsWorkshop.date
+            ? new Date(detailsWorkshop.date).toLocaleString()
+            : "N/A"}
+        </div>
+        <div className="mb-2">
+          <strong>Location:</strong> {detailsWorkshop.location || "N/A"}
+        </div>
+        <div className="mb-2">
+          <strong>Duration:</strong> {detailsWorkshop.duration || "N/A"}
+        </div>
+        <div className="mb-2">
+          <strong>Resource:</strong>{" "}
+          {detailsWorkshop.resource ? (
+            <a
+              href={detailsWorkshop.resource}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-600 underline"
+            >
+              View Resource
+            </a>
+          ) : (
+            "N/A"
+          )}
+        </div>
+        <div className="mb-2">
+          <strong>Facilitator:</strong>{" "}
+          {detailsWorkshop.facilitator?.name || detailsWorkshop.facilitatorName || "N/A"}
+        </div>
+        <div className="mb-2">
+          <strong>Facilitator Email:</strong>{" "}
+          {detailsWorkshop.facilitator?.email || detailsWorkshop.facilitatorEmail || "N/A"}
+        </div>
+      </div>
+    </div>
   );
 
   return (
@@ -283,49 +656,19 @@ const ManageContent = () => {
           <div>
             <h4 className="font-semibold mb-2">Previous Workshops (Read Only)</h4>
             <CardContent>
-              {loading ? <div>Loading...</div> : renderTable(previousWorkshops, "workshops", true)}
+              {loading ? (
+                <div>Loading...</div>
+              ) : (
+                renderTable(previousWorkshops, "workshops", true, true)
+              )}
             </CardContent>
           </div>
         </TabsContent>
       </Tabs>
 
       {/* Create Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
-            <h3 className="text-lg font-semibold mb-4">
-              Create {tab === "courses" ? "Course" : "Workshop"}
-            </h3>
-            <Input
-              className="mb-4"
-              placeholder="Title"
-              value={createData.title}
-              onChange={(e) => setCreateData({ ...createData, title: e.target.value })}
-            />
-            <Textarea
-              className="mb-4"
-              placeholder="Description"
-              value={createData.description}
-              onChange={(e) => setCreateData({ ...createData, description: e.target.value })}
-              rows={3}
-            />
-            <label className="block mb-4">
-              <span className="block mb-1 text-sm font-medium">Image</span>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={e => setCreateData({ ...createData, image: e.target.files[0] })}
-              />
-            </label>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => { setShowCreateModal(false); setCreateData(initialFormState); }}>
-                Cancel
-              </Button>
-              <Button onClick={handleCreate}>Create</Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {showCreateModal &&
+        (tab === "courses" ? CourseCreateModal : WorkshopCreateModal)}
 
       {/* Delete Modal */}
       {showDeleteModal && selectedItem && (
@@ -350,42 +693,13 @@ const ManageContent = () => {
       )}
 
       {/* Update Modal */}
-      {showUpdateModal && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
-            <h3 className="text-lg font-semibold mb-4">
-              Edit {selectedItem.type === "courses" ? "Course" : "Workshop"}
-            </h3>
-            <Input
-              className="mb-4"
-              placeholder="Title"
-              value={updateData.title}
-              onChange={(e) => setUpdateData({ ...updateData, title: e.target.value })}
-            />
-            <Textarea
-              className="mb-4"
-              placeholder="Description"
-              value={updateData.description}
-              onChange={(e) => setUpdateData({ ...updateData, description: e.target.value })}
-              rows={3}
-            />
-            <label className="block mb-4">
-              <span className="block mb-1 text-sm font-medium">Image</span>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={e => setUpdateData({ ...updateData, image: e.target.files[0] })}
-              />
-            </label>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowUpdateModal(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleUpdate}>Update</Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {showUpdateModal && selectedItem &&
+        (selectedItem.type === "courses"
+          ? CourseUpdateModal
+          : WorkshopUpdateModal)}
+
+      {/* Previous Workshop Details Modal */}
+      {showDetailsModal && PreviousWorkshopDetailsModal}
     </Card>
   );
 };
