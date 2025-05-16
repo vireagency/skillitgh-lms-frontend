@@ -4,12 +4,10 @@ import { FallingLines } from "react-loader-spinner";
 
 // Utility to generate a random pastel color
 function getRandomColor(seed) {
-  // Use seed for deterministic color per workshop
   let hash = 0;
   for (let i = 0; i < seed.length; i++) {
     hash = seed.charCodeAt(i) + ((hash << 5) - hash);
   }
-  // Generate pastel color
   const h = Math.abs(hash) % 360;
   return `hsl(${h}, 70%, 85%)`;
 }
@@ -18,6 +16,7 @@ export default function RegisteredWorkshopsCard() {
   const [workshops, setWorkshops] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalWorkshop, setModalWorkshop] = useState(null);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     const fetchWorkshops = async () => {
@@ -37,6 +36,8 @@ export default function RegisteredWorkshopsCard() {
     fetchWorkshops();
   }, []);
 
+  const visibleWorkshops = showAll ? workshops : workshops.slice(0, 3);
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
       <h2 className="text-lg font-semibold mb-4">Registered Workshops</h2>
@@ -53,39 +54,51 @@ export default function RegisteredWorkshopsCard() {
       ) : workshops.length === 0 ? (
         <p>No registered workshops.</p>
       ) : (
-        workshops.map((workshop, index) => (
-          <div
-            key={index}
-            className="flex justify-between items-center border-b py-2 px-2 h-24 cursor-pointer transition hover:shadow-lg"
-            style={{
-              background: getRandomColor(workshop.title || String(index)),
-              borderRadius: "0.5rem",
-              marginBottom: "0.5rem",
-            }}
-            onClick={() => setModalWorkshop(workshop)}
-            tabIndex={0}
-            onKeyDown={e => { if (e.key === "Enter") setModalWorkshop(workshop); }}
-            aria-label={`Show details for ${workshop.title}`}
-          >
-            <span className="font-medium">{workshop.title}</span>
-            <div className="flex space-x-1">
-              {workshop.attendees?.slice(0, 4).map((att, i) => (
-                <span key={i} className="text-xl">
-                  <img
-                    src={att.userImage}
-                    alt={att.name || "Attendee"}
-                    className="w-8 h-8 rounded-full border"
-                  />
-                </span>
-              ))}
-              {workshop.attendees?.length > 4 && (
-                <span className="text-xs text-gray-600 ml-2">
-                  +{workshop.attendees.length - 4} more
-                </span>
-              )}
+        <>
+          {visibleWorkshops.map((workshop, index) => (
+            <div
+              key={index}
+              className="flex justify-between items-center border-b py-2 px-2 h-24 cursor-pointer transition hover:shadow-lg"
+              style={{
+                background: getRandomColor(workshop.title || String(index)),
+                borderRadius: "0.5rem",
+                marginBottom: "0.5rem",
+              }}
+              onClick={() => setModalWorkshop(workshop)}
+              tabIndex={0}
+              onKeyDown={e => { if (e.key === "Enter") setModalWorkshop(workshop); }}
+              aria-label={`Show details for ${workshop.title}`}
+            >
+              <span className="font-medium">{workshop.title}</span>
+              <div className="flex space-x-1">
+                {workshop.attendees?.slice(0, 4).map((att, i) => (
+                  <span key={i} className="text-xl">
+                    <img
+                      src={att.userImage}
+                      alt={att.name || "Attendee"}
+                      className="w-8 h-8 rounded-full border"
+                    />
+                  </span>
+                ))}
+                {workshop.attendees?.length > 4 && (
+                  <span className="text-xs text-gray-600 ml-2">
+                    +{workshop.attendees.length - 4} more
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        ))
+          ))}
+          {workshops.length > 3 && (
+            <div className="flex justify-center mt-2">
+              <button
+                className="text-green-600 hover:underline text-sm font-medium"
+                onClick={() => setShowAll((prev) => !prev)}
+              >
+                {showAll ? "View less" : "View more"}
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {/* Modal for workshop details */}
@@ -113,7 +126,9 @@ export default function RegisteredWorkshopsCard() {
                         className="w-10 h-10 rounded-full border"
                       />
                       <div>
-                        <div className="font-medium">{att.firstName || "No Name"} <span>{att.lastName}</span></div>
+                        <div className="font-medium">
+                          {att.firstName || "No Name"} <span>{att.lastName}</span>
+                        </div>
                         <div className="text-xs text-gray-500">{att.email || ""}</div>
                       </div>
                     </li>
