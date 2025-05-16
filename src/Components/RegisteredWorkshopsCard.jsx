@@ -90,10 +90,10 @@ export default function RegisteredWorkshopsCard() {
       ) : (
         workshops.map((workshop, index) => (
           <div key={index} className="flex justify-between items-center border-b py-2">
-            <span>{workshop.name}</span>
+            <span>{workshop.title}</span>
             <div className="flex space-x-1">
               {workshop.attendees?.map((att, i) => (
-                <span key={i} className="text-xl">{att}</span>
+                <span key={i} className="text-xl">{att.fisrtName}</span>
               ))}
             </div>
           </div>
