@@ -9,11 +9,12 @@ export default function RegisteredCoursesCard() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const { data } = await axios.get(
+        const res = await axios.get(
           "https://skillitgh-lms.onrender.com/api/v1/dashboard/registeredCourses",
           { withCredentials: true }
         );
-        setCourses(data);
+        setCourses(res.data.courses);
+        console.log(res.data.courses);
       } catch (err) {
         console.error("Failed to fetch courses:", err);
       } finally {
