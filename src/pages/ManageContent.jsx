@@ -17,7 +17,7 @@ const initialFormState = {
   facilitatorName: "",
   facilitatorEmail: "",
   duration: "",
-  resource: "",
+  // resource: "",
 };
 
 const ManageContent = () => {
@@ -96,7 +96,7 @@ const ManageContent = () => {
       facilitatorName: item.facilitator?.name || "",
       facilitatorEmail: item.facilitator?.email || "",
       duration: item.duration || "",
-      resource: item.resource || "",
+      // resource: item.resource || "",
     });
     setShowUpdateModal(true);
   };
@@ -160,7 +160,7 @@ const ManageContent = () => {
           payload.append("date", createData.date);
           payload.append("location", createData.location);
           payload.append("duration", createData.duration);
-          payload.append("resource", createData.resource);
+          // payload.append("resource", createData.resource);
           payload.append("facilitatorName", createData.facilitatorName);
           payload.append("facilitatorEmail", createData.facilitatorEmail);
           payload.append("workshopImage", createData.workshopImage);
@@ -172,7 +172,7 @@ const ManageContent = () => {
             date: createData.date,
             location: createData.location,
             duration: createData.duration,
-            resource: createData.resource,
+            // resource: createData.resource,
             facilitatorName: createData.facilitatorName,
             facilitatorEmail: createData.facilitatorEmail,
           };
@@ -225,7 +225,7 @@ const ManageContent = () => {
           payload.append("date", updateData.date);
           payload.append("location", updateData.location);
           payload.append("duration", updateData.duration);
-          payload.append("resource", updateData.resource);
+          // payload.append("resource", updateData.resource);
           payload.append("facilitatorName", updateData.facilitatorName);
           payload.append("facilitatorEmail", updateData.facilitatorEmail);
           payload.append("workshopImage", updateData.workshopImage);
@@ -237,7 +237,7 @@ const ManageContent = () => {
             date: updateData.date,
             location: updateData.location,
             duration: updateData.duration,
-            resource: updateData.resource,
+            // resource: updateData.resource,
             facilitatorName: updateData.facilitatorName,
             facilitatorEmail: updateData.facilitatorEmail,
           };
@@ -421,12 +421,12 @@ const ManageContent = () => {
           value={createData.duration}
           onChange={(e) => setCreateData({ ...createData, duration: e.target.value })}
         />
-        <Input
+        {/* <Input
           className="mb-4"
           placeholder="Resource Link"
           value={createData.resource}
           onChange={(e) => setCreateData({ ...createData, resource: e.target.value })}
-        />
+        /> */}
         <Input
           className="mb-4"
           placeholder="Facilitator Name"
@@ -530,12 +530,12 @@ const ManageContent = () => {
           value={updateData.duration}
           onChange={(e) => setUpdateData({ ...updateData, duration: e.target.value })}
         />
-        <Input
+        {/* <Input
           className="mb-4"
           placeholder="Resource Link"
           value={updateData.resource}
           onChange={(e) => setUpdateData({ ...updateData, resource: e.target.value })}
-        />
+        /> */}
         <Input
           className="mb-4"
           placeholder="Facilitator Name"
@@ -598,7 +598,7 @@ const ManageContent = () => {
         <div className="mb-2">
           <strong>Duration:</strong> {detailsWorkshop.duration || "N/A"}
         </div>
-        <div className="mb-2">
+        {/* <div className="mb-2">
           <strong>Resource:</strong>{" "}
           {detailsWorkshop.resource ? (
             <a
@@ -612,7 +612,7 @@ const ManageContent = () => {
           ) : (
             "N/A"
           )}
-        </div>
+        </div> */}
         <div className="mb-2">
           <strong>Facilitator:</strong>{" "}
           {detailsWorkshop.facilitator?.name || detailsWorkshop.facilitatorName || "N/A"}
