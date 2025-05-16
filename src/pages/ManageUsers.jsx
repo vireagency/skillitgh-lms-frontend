@@ -5,13 +5,14 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 
 const API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/users";
-const PROFILE_API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile";
+// const PROFILE_API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile";
 
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [updateUser, setUpdateUser] = useState(null);
+  const [deleteUser, setDeleteUser] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -41,7 +42,7 @@ export default function ManageUsers() {
   // Handle update
   const handleUpdate = async () => {
     try {
-      await axios.patch(`${PROFILE_API}/${updateUser._id}`, updateUser, {
+      await axios.put(`${API}/${updateUser._id}`, updateUser, {
         withCredentials: true,
       });
       setShowUpdateModal(false);
@@ -54,12 +55,17 @@ export default function ManageUsers() {
 
   // Handle delete
   const handleDelete = async () => {
+    // if (!deleteUser || !deleteUser._id) {
+    // console.error("No user selected for deletion");
+    // return;
+    // }
+
     try {
-      await axios.delete(`${API}/${updateUser._id}`, {
+      await axios.delete(`${API}/${deleteUser._id}`, {
         withCredentials: true
       });
       setShowDeleteModal(false);
-      setUpdateUser(null);
+      setDeleteUser(null);
       fetchUsers();
     } catch (err) {
       console.error("Delete error:", err);
@@ -106,7 +112,7 @@ export default function ManageUsers() {
                   size="sm"
                   variant="destructive"
                   onClick={() => {
-                    setUpdateUser(user);
+                    setDeleteUser(user);
                     setShowDeleteModal(true);
                   }}
                 >
@@ -177,7 +183,7 @@ export default function ManageUsers() {
             <p className="mb-6 text-gray-700">
               Are you sure you want to delete{" "}
               <strong>
-                {updateUser?.firstName} {updateUser?.lastName}
+                {deleteUser?.firstName} {deleteUser?.lastName}
               </strong>
               ?
             </p>
