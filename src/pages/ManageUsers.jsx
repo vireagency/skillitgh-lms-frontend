@@ -120,69 +120,75 @@ export default function ManageUsers() {
 
       {/* Update Modal */}
       {showUpdateModal && (
-        <div className="bg-white p-6 rounded-lg shadow max-w-sm mx-auto">
-          <h3 className="text-lg font-medium mb-4">
-            Update information for {updateUser?.firstName} {updateUser?.lastName}
-          </h3>
-          <Input
-            placeholder="First Name"
-            value={updateUser?.firstName || ""}
-            onChange={(e) =>
-              setUpdateUser({ ...updateUser, firstName: e.target.value })
-            }
-            className="mb-4"
-          />
-          <Input
-            placeholder="Last Name"
-            value={updateUser?.lastName || ""}
-            onChange={(e) =>
-              setUpdateUser({ ...updateUser, lastName: e.target.value })
-            }
-            className="mb-4"
-          />
-          <Input
-            placeholder="Email"
-            value={updateUser?.email || ""}
-            onChange={(e) =>
-              setUpdateUser({ ...updateUser, email: e.target.value })
-            }
-            className="mb-4"
-          />
-          <Input
-            placeholder="Role"
-            value={updateUser?.role || ""}
-            onChange={(e) =>
-              setUpdateUser({ ...updateUser, role: e.target.value })
-            }
-            className="mb-4"
-          />
-          <div className="flex gap-2 justify-end">
-            <Button onClick={() => setShowUpdateModal(false)} variant="outline">
-              Cancel
-            </Button>
-            <Button onClick={handleUpdate}>
-              Update
-            </Button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">
+              Update User
+            </h3>
+            <div className="space-y-4">
+              <Input
+                placeholder="First Name"
+                value={updateUser?.firstName || ""}
+                onChange={(e) =>
+                  setUpdateUser({ ...updateUser, firstName: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Last Name"
+                value={updateUser?.lastName || ""}
+                onChange={(e) =>
+                  setUpdateUser({ ...updateUser, lastName: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Email"
+                value={updateUser?.email || ""}
+                onChange={(e) =>
+                  setUpdateUser({ ...updateUser, email: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Role"
+                value={updateUser?.role || ""}
+                onChange={(e) =>
+                  setUpdateUser({ ...updateUser, role: e.target.value })
+                }
+              />
+            </div>
+            <div className="flex gap-2 justify-end mt-6">
+              <Button onClick={() => setShowUpdateModal(false)} variant="outline">
+                Cancel
+              </Button>
+              <Button onClick={handleUpdate}>
+                Update
+              </Button>
+            </div>
           </div>
         </div>
       )}
 
       {/* Delete Modal */}
       {showDeleteModal && (
-        <div className="bg-white p-6 rounded-lg shadow max-w-sm mx-auto">
-          <h3 className="text-lg font-medium mb-4 text-red-600">
-            Confirm Deletion
-          </h3>
-          <p className="mb-4">
-            Are you sure you want to delete <strong>{updateUser?.firstName} {updateUser?.lastName}</strong>?
-          </p>
-          <div className="flex gap-2 justify-end">
-            <Button onClick={() => setShowDeleteModal(false)} variant="outline">
-              Cancel
-            </Button>
-            <Button onClick={handleDelete}>
-              Delete
-            </Button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+            <h3 className="text-xl font-semibold mb-4 text-red-600">
+              Confirm Deletion
+            </h3>
+            <p className="mb-6 text-gray-700">
+              Are you sure you want to delete{" "}
+              <strong>
+                {updateUser?.firstName} {updateUser?.lastName}
+              </strong>
+              ?
+            </p>
+            <div className="flex gap-2 justify-end">
+              <Button onClick={() => setShowDeleteModal(false)} variant="outline">
+                Cancel
+              </Button>
+              <Button onClick={handleDelete} variant="destructive">
+                Delete
+              </Button>
+            </div>
           </div>
         </div>
       )}
