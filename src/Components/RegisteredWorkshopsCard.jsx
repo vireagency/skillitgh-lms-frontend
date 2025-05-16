@@ -93,7 +93,13 @@ export default function RegisteredWorkshopsCard() {
             <span>{workshop.title}</span>
             <div className="flex space-x-1">
               {workshop.attendees?.map((att, i) => (
-                <span key={i} className="text-xl">{att.fisrtName}</span>
+                <span key={i} className="text-xl">
+                  <img 
+                  src={att.userImage} 
+                  alt="description"
+                  className="w-8 h-8 rounded-full"
+                   />
+                </span>
               ))}
             </div>
           </div>
