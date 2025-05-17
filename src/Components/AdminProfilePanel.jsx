@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FallingLines } from "react-loader-spinner";
+import { toast } from "react-toastify";
 
 export function AdminProfilePanel() {
   const [admin, setAdmin] = useState(null);
@@ -49,38 +50,107 @@ export function AdminProfilePanel() {
   );
 }
 
-export function NotificationPanel(){ 
-    const [notifications, setNotifications] = useState([]);
+export function NotificationPanel() {
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
+  // Fetch notifications
+  const fetchNotifications = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        "https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications",
+        { withCredentials: true }
+      );
+      setNotifications(res.data || []);
+      console.log(res.data);
+    } catch (err) {
+        //console.error("Notification fetch failed:", err.response?.data || err.message);
+      setNotifications([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        axios
-        .get("https://skillitgh-lms.onrender.com/api/v1/notifications", {
-            withCredentials: true
-        })
-        .then((res) => setNotifications(res.data))
-        .catch((err) => console.error("Notification fetch error:", err));
-    }, []);
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
 
+  // Mark as read
+  const handleMarkAsRead = async (notifId) => {
+    try {
+      await axios.patch(
+        `https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications/${notifId}/read`,
+        {},
+        { withCredentials: true }
+      );
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n._id === notifId ? { ...n, read: true } : n
+        )
+      );
+      toast.success("Notification marked as read");
+    } catch {
+      toast.error("Failed to mark as read");
+    }
+  };
 
-    return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-            
-            <div className="bg-white p-4 rounded-xl shadow-md">
-                <h2 className="text-lg font-semibold mb-4">Notifications</h2>
-                <ul className="space-y-2 max-h-60 overflow-y-auto">
-                {notifications.length === 0 ? (
-                    <p className="text-sm text-gray-400">No new notifications</p>
-                ) : (
-                    notifications.map((note, index) => (
-                    <li key={index} className="bg-gray-100 text-sm text-gray-700 p-2 rounded">
-                        {note.message}
-                    </li>
-                    ))
-                )}
-                </ul>
-            </div>
-        </div>
-    );
+  // Delete notification
+  const handleDelete = async (notifId) => {
+    try {
+      await axios.delete(
+        `https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications/${notifId}`,
+        { withCredentials: true }
+      );
+      setNotifications((prev) => prev.filter((n) => n._id !== notifId));
+      toast.success("Notification deleted");
+    } catch {
+      toast.error("Failed to delete notification");
+    }
+  };
+
+  if (loading) {
+    return <div className="p-4 text-center text-gray-500">Loading...</div>;
+  }
+
+  if (!notifications.length) {
+    return <div className="p-4 text-center text-gray-500">No notifications.</div>;
+  }
+
+  return (
+    <ul className="divide-y">
+      {notifications.map((notif, idx) => (
+        <li
+          key={notif._id || idx}
+          className={`p-4 flex justify-between items-start hover:bg-gray-50 transition ${notif.read ? "opacity-60" : ""}`}
+        >
+          <div>
+            <div className="font-medium">{notif.title || "Notification"}</div>
+            <div className="text-sm text-gray-600">{notif.message || notif.body}</div>
+            {notif.createdAt && (
+              <div className="text-xs text-gray-400 mt-1">
+                {new Date(notif.createdAt).toLocaleString()}
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-1 ml-2">
+            {!notif.read && (
+              <button
+                className="text-xs text-green-600 hover:underline"
+                onClick={() => handleMarkAsRead(notif._id)}
+              >
+                Mark as read
+              </button>
+            )}
+            <button
+              className="text-xs text-red-500 hover:underline"
+              onClick={() => handleDelete(notif._id)}
+            >
+              Delete
+            </button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
 }
