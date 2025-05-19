@@ -21,9 +21,13 @@ export default function RegisteredWorkshopsCard() {
   useEffect(() => {
     const fetchWorkshops = async () => {
       try {
+        const token = sessionStorage.getItem("token");
         const res = await axios.get(
           "https://skillitgh-lms.onrender.com/api/v1/workshops/registeredWorkshops",
-          { withCredentials: true }
+          {
+            withCredentials: true,
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          }
         );
         setWorkshops(res.data.workshops);
       } catch (err) {
