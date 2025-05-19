@@ -36,8 +36,10 @@ function AdminDashboardLayout() {
   // Fetch admin profile
   const fetchProfile = useCallback(async () => {
     try {
+      const token = sessionStorage.getItem("token");
       const res = await axios.get("https://skillitgh-lms.onrender.com/api/v1/dashboard/profile", {
         withCredentials: true,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       setProfileImage(res.data.user.userImage);
       setAdminProfile(res.data.user);
