@@ -23,9 +23,15 @@ const SignUp = () => {
 
   const onSubmit = async (data) => {
     try {
-
       const response = await axios.post("https://skillitgh-lms.onrender.com/api/v1/auth/register", data, { timeout: 5000 });
-          
+
+      // Save token and user to sessionStorage
+      const { token, user } = response.data;
+      if (token) {
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("user", JSON.stringify(user));
+      }
+
       toast.success("Successfully registered!", {
         position: "top-right",
         autoClose: 2000,
@@ -34,7 +40,7 @@ const SignUp = () => {
       console.log("Response:", response.data);
       console.log("formData:", data);
 
-      setTimeout(() => {navigate("/signin");}, 2500); 
+      setTimeout(() => { navigate("/signin"); }, 2500); 
 
     } catch (error) {
       const msg =
