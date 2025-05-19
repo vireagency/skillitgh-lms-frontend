@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { FallingLines } from "react-loader-spinner";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/Components/ui/pagination";
 
 const WorkshopsPage = () => {
   // Use sessionStorage instead of localStorage
@@ -22,6 +23,8 @@ const WorkshopsPage = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showUnregisterModal, setShowUnregisterModal] = useState(false);
   const [unregisterWorkshop, setUnregisterWorkshop] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchWorkshops = () => {
     setLoading(true);
@@ -30,8 +33,8 @@ const WorkshopsPage = () => {
 
     const url =
       view === "upcoming"
-        ? "https://skillitgh-lms.onrender.com/api/v1/workshops/upcoming"
-        : "https://skillitgh-lms.onrender.com/api/v1/workshops/previous";
+        ? `https://skillitgh-lms.onrender.com/api/v1/workshops/upcoming?page=${page}`
+        : `https://skillitgh-lms.onrender.com/api/v1/workshops/previous?page=${page}`;
 
     axios
       .get(url, 
@@ -47,11 +50,17 @@ const WorkshopsPage = () => {
             isRegistered: workshop.attendees?.includes(currentUserId),
           }));
           setWorkshops(enhancedData);
+          setTotalPages(response.data.totalPages || 1);
+          console.log(response.data);
           toast.success(response.data.message || "Workshops loaded!");
+        } else {
+          setWorkshops([]);
+          setTotalPages(1);
         }
       })
       .catch((err) => {
-        setWorkshops([]); 
+        setWorkshops([]);
+        setTotalPages(1);
         const backendMessage = err.response?.data?.message || "Failed to load workshops.";
         setErrorMessage(backendMessage);
         console.error(err);
@@ -61,7 +70,8 @@ const WorkshopsPage = () => {
 
   useEffect(() => {
     fetchWorkshops();
-  }, [view]);
+    // eslint-disable-next-line
+  }, [view, page]);
 
   return (
     <div className="px-4 md:px-20 py-10">
@@ -270,6 +280,40 @@ const WorkshopsPage = () => {
 
 
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-8">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={page === 1}
+                  className={page === 1 ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+              {[...Array(totalPages)].map((_, idx) => (
+                <PaginationItem key={idx}>
+                  <PaginationLink
+                    isActive={page === idx + 1}
+                    onClick={() => setPage(idx + 1)}
+                  >
+                    {idx + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={page === totalPages}
+                  className={page === totalPages ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
 
       {!loading && workshops.length === 0 && (
         <p className="text-center text-gray-500 mt-10">{errorMessage}</p>
