@@ -19,16 +19,19 @@ export default function RegisteredCoursesCard() {
   const [showAll, setShowAll] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
 
-  
-
   useEffect(() => {
     const fetchCourses = async () => {
       try {
+        // Use sessionStorage for token if needed
+        const token = sessionStorage.getItem("token");
         const res = await axios.get(
           "https://skillitgh-lms.onrender.com/api/v1/dashboard/students",
-          { withCredentials: true }
+          {
+            withCredentials: true,
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          }
         );
-        setCourses(res.data.course);
+        setCourses(res.data.courses);
         setTotalCount(res.data.totalCount);
         console.log(res.data);
         console.log(totalCount);
