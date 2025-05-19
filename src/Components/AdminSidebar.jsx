@@ -58,6 +58,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } fr
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { BookOpen, Anvil, LogOut, User } from "lucide-react";
+import axios from "axios";
 
 export function AdminSidebar() {
   const location = useLocation();
@@ -68,12 +69,7 @@ export function AdminSidebar() {
     setShowModal(true);
   };
 
-  // const confirmLogout = () => {
-  //   setShowModal(false);
-  //   localStorage.removeItem("token");
-  //   navigate("/signin");
-  // };
-
+  // Use sessionStorage instead of localStorage for token removal
   const confirmLogout = async () => {
     setShowModal(false);
     try {
@@ -85,10 +81,10 @@ export function AdminSidebar() {
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
+      sessionStorage.removeItem("token");
       navigate("/signin");
     }
   };
-
 
   const menu = [
     { type: "link", label: "Dashboard", icon: <BookOpen className="mr-2 h-5 w-5" />, path: "/admin-dashboard" },
@@ -108,14 +104,13 @@ export function AdminSidebar() {
           {menu.map((item) => (
             <div key={item.label} className="flex items-center space-x-2">
               <Button
-              variant="ghost"
-              className={`justify-start flex-1 ${
-                location.pathname === item.path ? "bg-[#C2FFE1] text-[#08C76A]" : ""
-              } hover:bg-[#E9FCF3]`}
-              tooltip={item.label}
-              onClick={() => item.type === "action" ? item.action() : navigate(item.path)}
-            >
-
+                variant="ghost"
+                className={`justify-start flex-1 ${
+                  location.pathname === item.path ? "bg-[#C2FFE1] text-[#08C76A]" : ""
+                } hover:bg-[#E9FCF3]`}
+                tooltip={item.label}
+                onClick={() => item.type === "action" ? item.action() : navigate(item.path)}
+              >
                 {item.icon}
                 <span>{item.label}</span>
               </Button>
