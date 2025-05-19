@@ -28,7 +28,7 @@ const CoursesDashboard = () => {
     setLoading(true);
     setErrorMessage("");
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token"); // Use sessionStorage
     if (!token) {
       toast("Please sign in first.");
       return;
@@ -41,7 +41,8 @@ const CoursesDashboard = () => {
 
     axios
       .get(url, {
-        withCredentials: true
+        withCredentials: true,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       })
       .then((response) => {
         const data = response.data.courses;
@@ -153,12 +154,14 @@ const CoursesDashboard = () => {
               <button
                 className="bg-green-500 text-white px-4 py-2 rounded-3xl hover:bg-green-600"
                 onClick={() => {
+                  const token = sessionStorage.getItem("token"); // Use sessionStorage
                   axios
                     .post(
                       `https://skillitgh-lms.onrender.com/api/v1/dashboard/${selectedCourse._id}/register`, 
                       {}, 
                       {
-                        withCredentials: true
+                        withCredentials: true,
+                        headers: token ? { Authorization: `Bearer ${token}` } : {},
                       }
                     )
                     .then((response) => {
@@ -179,9 +182,6 @@ const CoursesDashboard = () => {
                       toast.error(backendMessage);
                       console.error(err);
                     });
-                    
-                 
-                  
                 }}
               >
                 Register
