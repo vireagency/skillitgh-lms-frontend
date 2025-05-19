@@ -15,10 +15,12 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        const token = sessionStorage.getItem("token");
         const response = await axios.get(
           'https://skillitgh-lms.onrender.com/api/v1/dashboard/profile',
           {
-            withCredentials: true
+            withCredentials: true,
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
           }
         );
         const data = response.data.user;
@@ -40,57 +42,47 @@ const ProfilePage = () => {
   };
 
   const handleSave = async () => {
-  try {
-    const formDataToSend = new FormData();
+    try {
+      const formDataToSend = new FormData();
 
-    // Append form data
-    formDataToSend.append("firstName", formData.firstName);
-    formDataToSend.append("lastName", formData.lastName);
-    formDataToSend.append("phoneNumber", formData.phoneNumber);
-    formDataToSend.append("gender", formData.gender);
-    formDataToSend.append("email", formData.email);
-    formDataToSend.append("location", formData.location);
+      // Append form data
+      formDataToSend.append("firstName", formData.firstName);
+      formDataToSend.append("lastName", formData.lastName);
+      formDataToSend.append("phoneNumber", formData.phoneNumber);
+      formDataToSend.append("gender", formData.gender);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("location", formData.location);
 
-    // Append image file if selected
-    if (imageFile) {
-      formDataToSend.append("userImage", imageFile);
-    }
-
-    const response = await axios.put(
-      "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile",
-      formDataToSend,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true, // ✅ Send cookies like accessToken
+      // Append image file if selected
+      if (imageFile) {
+        formDataToSend.append("userImage", imageFile);
       }
-    );
 
+      const token = sessionStorage.getItem("token");
+      const response = await axios.put(
+        "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile",
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          withCredentials: true,
+        }
+      );
 
-    // const response = await axios.put(
-    //   "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile",
-    //   formDataToSend,
-    //   {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //       Authorization: `Bearer ${localStorage.getItem("token")}`,
-    //     },
-    //   }
-    // );
-
-    setProfile(response.data.user);
-    toast.success("Profile updated successfully!");
-    setIsEditing(false);
-  } catch (error) {
-    const msg = error.response?.data?.message || "An error occurred. Try again.";
-    toast.error(msg, {
-      position: "top-right",
-      autoClose: 2500,
-    });
-    console.error("Error updating profile:", error);
-  }
-};
+      setProfile(response.data.user);
+      toast.success("Profile updated successfully!");
+      setIsEditing(false);
+    } catch (error) {
+      const msg = error.response?.data?.message || "An error occurred. Try again.";
+      toast.error(msg, {
+        position: "top-right",
+        autoClose: 2500,
+      });
+      console.error("Error updating profile:", error);
+    }
+  };
 
 
   if (!profile) return <div className='flex justify-center items-center'><FallingLines
@@ -155,25 +147,6 @@ const ProfilePage = () => {
       {isEditing ? (
         <>
           <div className="grid grid-cols-2 gap-6">
-            {/* {imageFile && (
-              <div className="mt-2">
-                <p className="text-sm text-gray-500">Image Preview:</p>
-                <img
-                  src={URL.createObjectURL(imageFile)}
-                  alt="Preview"
-                  className="w-16 h-16 rounded-full mt-1 border"
-                />
-              </div>
-            )} */}
-
-            {/* <div className='flex'>
-              <img src={profile.userImage} alt="avatar" className="w-16 h-16 rounded-full" />
-              <span>
-                <h2 className="text-lg font-semibold">{profile.firstName}</h2>
-                <p className="text-sm text-gray-500">{profile.email}</p>
-              </span>
-            </div> */}
-
             <div>
               <label className="block text-sm font-medium">First Name</label>
               <input name="firstName" type="text" value={formData.firstName} onChange={handleChange} className="w-full p-2 border rounded" />
@@ -218,42 +191,6 @@ const ProfilePage = () => {
             <p><strong>Email:</strong> {profile.email}</p>
             <p><strong>Location:</strong> {profile.location}</p>            
           </div>
-          {/* <div className="flex space-x-10 mt-10">
-            <div className="text-center">
-              <div className="relative w-24 h-24 mx-auto">
-                <svg className="w-full h-full" viewBox="0 0 36 36">
-                  <path
-                    className="text-purple-500 stroke-current"
-                    strokeWidth="3"
-                    fill="none"
-                    strokeDasharray={`${profile.attendanceRate}, 100`}
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center text-xl font-semibold">
-                  {profile.attendanceRate}%
-                </div>
-              </div>
-              <p className="mt-2">Attendance Rate</p>
-            </div>
-            <div className="text-center">
-              <div className="relative w-24 h-24 mx-auto">
-                <svg className="w-full h-full" viewBox="0 0 36 36">
-                  <path
-                    className="text-red-400 stroke-current"
-                    strokeWidth="3"
-                    fill="none"
-                    strokeDasharray={`${profile.completionRate}, 100`}
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center text-xl font-semibold">
-                  {profile.completionRate}%
-                </div>
-              </div>
-              <p className="mt-2">Completion Rate</p>
-            </div>
-          </div> */}
         </>
       )}
     </div>
