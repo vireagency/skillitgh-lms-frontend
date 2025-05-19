@@ -17,6 +17,8 @@ export default function RegisteredWorkshopsCard() {
   const [loading, setLoading] = useState(true);
   const [modalWorkshop, setModalWorkshop] = useState(null);
   const [showAll, setShowAll] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const [attendees, setAttendees] = useState(0);
 
   useEffect(() => {
     const fetchWorkshops = async () => {
@@ -30,6 +32,9 @@ export default function RegisteredWorkshopsCard() {
           }
         );
         setWorkshops(res.data.workshops);
+        setTotalCount(res.data.totalAttendees || 0);
+        setAttendees(res.data.workshopDetails);
+        console.log(res.data);
       } catch (err) {
         console.error("Failed to fetch workshops:", err);
       } finally {
@@ -45,6 +50,7 @@ export default function RegisteredWorkshopsCard() {
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
       <h2 className="text-lg font-semibold mb-4">Registered Workshops</h2>
+      <h3 className="text-sm text-gray-500 mb-2">Total Number of Attendees: {totalCount}</h3>
 
       {loading ? (
         <div className="flex justify-center items-center h-full">
@@ -73,7 +79,14 @@ export default function RegisteredWorkshopsCard() {
               onKeyDown={e => { if (e.key === "Enter") setModalWorkshop(workshop); }}
               aria-label={`Show details for ${workshop.title}`}
             >
-              <span className="font-medium">{workshop.title}</span>
+              <span className="font-medium">{workshop.title}
+                <p className="text-xs text-gray-600">
+                  Attendees:{" "}
+                  {
+                    (attendees.find(detail => detail.title === workshop.title)?.attendees) || 0
+                  }
+                </p>
+              </span>
               <div className="flex space-x-1">
                 {workshop.attendees?.slice(0, 4).map((att, i) => (
                   <span key={i} className="text-xl">
