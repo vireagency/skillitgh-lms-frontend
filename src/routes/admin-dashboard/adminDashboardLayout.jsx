@@ -182,7 +182,7 @@ function AdminDashboardLayout() {
                 onKeyDown={e => { if (e.key === "Enter") handleNotificationsClick(); }}
               />
               {showNotifications && (
-                <div className="absolute right-0 mt-3 w-80 max-w-xs bg-white shadow-2xl rounded-2xl z-50 border border-gray-100 animate-fade-in overflow-hidden">
+                <div className="absolute right-0 mt-3 w-[420px] max-w-lg bg-white shadow-2xl rounded-2xl z-50 border border-gray-100 animate-fade-in overflow-hidden">
                   <div className="p-4 border-b flex items-center justify-between bg-gray-50">
                     <span className="font-semibold text-gray-800">Notifications</span>
                     <button
