@@ -42,10 +42,11 @@ const ManageContent = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
+        const token = sessionStorage.getItem("token");
         const [coursesRes, upcomingRes, previousRes] = await Promise.all([
-          axios.get(`${API_BASE}/courses`, { withCredentials: true }),
-          axios.get(`${API_BASE}/workshops/upcoming`, { withCredentials: true }),
-          axios.get(`${API_BASE}/workshops/previous`, { withCredentials: true }),
+          axios.get(`${API_BASE}/courses`, { withCredentials: true, headers: token ? { Authorization: `Bearer ${token}` } : {} }),
+          axios.get(`${API_BASE}/workshops/upcoming`, { withCredentials: true, headers: token ? { Authorization: `Bearer ${token}` } : {} }),
+          axios.get(`${API_BASE}/workshops/previous`, { withCredentials: true, headers: token ? { Authorization: `Bearer ${token}` } : {} }),
         ]);
         setCourses(coursesRes.data.courses || []);
         setUpcomingWorkshops(upcomingRes.data.workshops || []);
@@ -65,7 +66,8 @@ const ManageContent = () => {
     const { id, _id, type } = selectedItem;
     const itemId = id || _id;
     try {
-      await axios.delete(`${API_BASE}/${type}/${itemId}`, { withCredentials: true });
+      const token = sessionStorage.getItem("token");
+      await axios.delete(`${API_BASE}/${type}/${itemId}`, { withCredentials: true, headers: token ? { Authorization: `Bearer ${token}` } : {} });
       if (type === "courses") {
         setCourses((prev) => prev.filter((item) => item.id !== itemId && item._id !== itemId));
       } else {
@@ -104,10 +106,11 @@ const ManageContent = () => {
   // Publish/unpublish handler
   const handleTogglePublish = async (id, type, published) => {
     try {
+      const token = sessionStorage.getItem("token");
       await axios.put(
         `${API_BASE}/${type}/${id}`,
         { published: !published },
-        { withCredentials: true }
+        { withCredentials: true, headers: token ? { Authorization: `Bearer ${token}` } : {} }
       );
       if (type === "courses") {
         setCourses((prev) =>
@@ -138,6 +141,7 @@ const ManageContent = () => {
     try {
       let payload;
       let headers = {};
+      const token = sessionStorage.getItem("token");
       if (type === "courses") {
         if (createData.image) {
           payload = new FormData();
@@ -181,7 +185,7 @@ const ManageContent = () => {
       const res = await axios.post(
         `${API_BASE}/${type}`,
         payload,
-        { withCredentials: true, ...headers }
+        { withCredentials: true, headers: { ...headers, ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
       );
       if (type === "courses") {
         setCourses((prev) => [...prev, res.data.course || res.data.courses?.[0]]);
@@ -203,6 +207,7 @@ const ManageContent = () => {
     try {
       let payload;
       let headers = {};
+      const token = sessionStorage.getItem("token");
       if (type === "courses") {
         if (updateData.image && updateData.image instanceof File) {
           payload = new FormData();
@@ -246,7 +251,7 @@ const ManageContent = () => {
       const res = await axios.put(
         `${API_BASE}/${type}/${itemId}`,
         payload,
-        { withCredentials: true, ...headers }
+        { withCredentials: true, headers: { ...headers, ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
       );
       if (type === "courses") {
         setCourses((prev) =>
