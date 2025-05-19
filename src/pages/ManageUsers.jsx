@@ -7,7 +7,6 @@ import { Input } from "@/Components/ui/input";
 const API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/users";
 // const PROFILE_API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile";
 
-
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
@@ -19,8 +18,10 @@ export default function ManageUsers() {
   // Fetch users
   const fetchUsers = async () => {
     try {
+      const token = sessionStorage.getItem("token");
       const response = await axios.get(API, {
-        withCredentials: true
+        withCredentials: true,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       setUsers(response.data.users);
     } catch (err) {
@@ -42,8 +43,10 @@ export default function ManageUsers() {
   // Handle update
   const handleUpdate = async () => {
     try {
+      const token = sessionStorage.getItem("token");
       await axios.put(`${API}/${updateUser._id}`, updateUser, {
         withCredentials: true,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       setShowUpdateModal(false);
       setUpdateUser(null);
@@ -55,14 +58,11 @@ export default function ManageUsers() {
 
   // Handle delete
   const handleDelete = async () => {
-    // if (!deleteUser || !deleteUser._id) {
-    // console.error("No user selected for deletion");
-    // return;
-    // }
-
     try {
+      const token = sessionStorage.getItem("token");
       await axios.delete(`${API}/${deleteUser._id}`, {
-        withCredentials: true
+        withCredentials: true,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       setShowDeleteModal(false);
       setDeleteUser(null);
