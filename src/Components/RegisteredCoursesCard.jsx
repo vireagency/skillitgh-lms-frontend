@@ -18,6 +18,7 @@ export default function RegisteredCoursesCard() {
   const [modalCourse, setModalCourse] = useState(null);
   const [showAll, setShowAll] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
+  const [students, setStudents] = useState(0);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -32,9 +33,9 @@ export default function RegisteredCoursesCard() {
           }
         );
         setCourses(res.data.courses);
-        setTotalCount(res.data.totalCount);
+        setTotalCount(res.data.totalStudents || 0);
+        setStudents(res.data.courseDetails);
         console.log(res.data);
-        console.log(totalCount);
       } catch (err) {
         console.error("Failed to fetch courses:", err);
       } finally {
@@ -78,7 +79,14 @@ export default function RegisteredCoursesCard() {
               onKeyDown={e => { if (e.key === "Enter") setModalCourse(course); }}
               aria-label={`Show details for ${course.title}`}
             >
-              <span className="font-medium">{course.title}</span>
+              <span className="font-medium">{course.title}
+                <p className="text-sm text-gray-600">
+                  Students:{" "}
+                  {
+                    (students.find(detail => detail.courseTitle === course.title)?.studentCount) || 0
+                  }
+                </p>
+              </span>
               <div className="flex space-x-1">
                 {(course.registeredUsers || []).slice(0, 4).map((reg, i) => (
                   <span key={i} className="text-xl">
