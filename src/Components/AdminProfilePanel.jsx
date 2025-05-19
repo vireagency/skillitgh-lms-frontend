@@ -59,14 +59,18 @@ export function NotificationPanel() {
   const fetchNotifications = async () => {
     setLoading(true);
     try {
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(
         "https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications",
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
       );
-      setNotifications(res.data || []);
-      console.log(res.data);
+      // Use res.data.notifications (array) from backend response
+      setNotifications(res.data.notifications || []);
+      // console.log(res.data.notifications);
     } catch (err) {
-        //console.error("Notification fetch failed:", err.response?.data || err.message);
       setNotifications([]);
     } finally {
       setLoading(false);
@@ -78,16 +82,20 @@ export function NotificationPanel() {
   }, []);
 
   // Mark as read
-  const handleMarkAsRead = async (notifId) => {
+  const handleMarkAsRead = async (notificationId) => {
     try {
-      await axios.patch(
-        `https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications/${notifId}/read`,
+      const token = sessionStorage.getItem("token");
+      await axios.put(
+        `https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications/${notificationId}`,
         {},
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
       );
       setNotifications((prev) =>
         prev.map((n) =>
-          n._id === notifId ? { ...n, read: true } : n
+          n._id === notificationId ? { ...n, isRead: true } : n
         )
       );
       toast.success("Notification marked as read");
@@ -97,13 +105,17 @@ export function NotificationPanel() {
   };
 
   // Delete notification
-  const handleDelete = async (notifId) => {
+  const handleDelete = async (notificationId) => {
     try {
+      const token = sessionStorage.getItem("token");
       await axios.delete(
-        `https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications/${notifId}`,
-        { withCredentials: true }
+        `https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications/${notificationId}`,
+        {
+          withCredentials: true,
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
       );
-      setNotifications((prev) => prev.filter((n) => n._id !== notifId));
+      setNotifications((prev) => prev.filter((n) => n._id !== notificationId));
       toast.success("Notification deleted");
     } catch {
       toast.error("Failed to delete notification");
@@ -111,7 +123,16 @@ export function NotificationPanel() {
   };
 
   if (loading) {
-    return <div className="p-4 text-center text-gray-500">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-full">
+        <FallingLines
+          color="#4fa94d"
+          width="100"
+          visible={true}
+          ariaLabel="falling-circles-loading"
+        />
+      </div>
+    );
   }
 
   if (!notifications.length) {
@@ -119,11 +140,11 @@ export function NotificationPanel() {
   }
 
   return (
-    <ul className="divide-y">
+    <ul className="divide-y w-96">
       {notifications.map((notif, idx) => (
         <li
           key={notif._id || idx}
-          className={`p-4 flex justify-between items-start hover:bg-gray-50 transition ${notif.read ? "opacity-60" : ""}`}
+          className={`p-4 flex justify-between items-start hover:bg-gray-50 transition ${notif.isRead ? "opacity-60" : ""}`}
         >
           <div>
             <div className="font-medium">{notif.title || "Notification"}</div>
@@ -135,16 +156,16 @@ export function NotificationPanel() {
             )}
           </div>
           <div className="flex flex-col gap-1 ml-2">
-            {!notif.read && (
+            {!notif.isRead && (
               <button
-                className="text-xs text-green-600 hover:underline"
+                className="text-xs px-2 py-1 rounded bg-green-100 text-green-700 hover:bg-green-200 transition"
                 onClick={() => handleMarkAsRead(notif._id)}
               >
                 Mark as read
               </button>
             )}
             <button
-              className="text-xs text-red-500 hover:underline"
+              className="text-xs px-2 py-1 rounded bg-red-100 text-red-700 hover:bg-red-200 transition"
               onClick={() => handleDelete(notif._id)}
             >
               Delete
