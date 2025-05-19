@@ -64,7 +64,6 @@ import { FallingLines } from "react-loader-spinner";
 const COLORS = ['bg-red-400', 'bg-green-400', 'bg-orange-400'];
 const MAX_VISIBLE = 3;
 
-
 const CalendarPanel = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,11 +71,12 @@ const CalendarPanel = () => {
   const visibleEvents = showAll ? events : events.slice(0, MAX_VISIBLE);
   const today = dayjs();
 
-  const token = localStorage.getItem("token");
-      if (!token) {
-        toast("Please sign in first.");
-        return;
-      }
+  // Use sessionStorage instead of localStorage
+  const token = sessionStorage.getItem("token");
+  if (!token) {
+    // toast("Please sign in first."); // Uncomment if you use toast
+    return null;
+  }
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -92,9 +92,7 @@ const CalendarPanel = () => {
         }));
         
         setEvents(eventsWithColors);
-        
-        //setEvents(res.data.workshops);
-        console.log("Fetched events:", events);
+        //console.log("Fetched events:", events);
       } catch (err) {
         console.error("Error fetching events:", err);
       } finally {
