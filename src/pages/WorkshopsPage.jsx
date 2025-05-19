@@ -1,111 +1,3 @@
-/*import WorkshopCard from "../Components/WorkshopCard";
-import React from "react";
-import "../index.css"; 
-// import { useNavigate } from "react-router-dom";
-
-/*const workshops = Array(6).fill({
-  date: "01/05/25",
-  title: "First Graphic Design workshop about photoshop",
-  image: "/image 6.png",
-});
-
-//const navigate = useNavigate();
-  //const path = {
-    //route: "/workshopregistration"
-  //};
-
-const WorkshopsPage = () => {
-  return (
-    <div className="px-4 md:px-20 py-10">
-      
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-semibold text-gray-800">Workshops</h1>
-        <p className="text-sm text-gray-500">Register for any upcoming workshop you are interested in attending</p>
-
-        <div className="flex justify-center gap-4 mt-6">
-          <button className="bg-green-500 text-white px-4 py-2 rounded-full font-medium">Upcoming Workshops</button>
-          <button className="text-gray-700 px-4 py-2 rounded-full font-medium">Previous Workshops</button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {workshops.map((workshop, idx) => (
-          <WorkshopCard key={idx} {...workshop} />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default WorkshopsPage;*
-
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import WorkshopCard from "../Components/WorkshopCard";
-import "../index.css";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
-const WorkshopsPage = () => {
-  const [workshops, setWorkshops] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    axios
-      .get("https://skillitgh-lms.onrender.com/api/v1/workshops/upcoming") // Replace with your actual backend endpoint
-      .then((response) => {
-        setWorkshops(response.data.data);
-        console.log(response.data);
-        toast.success(response.data.message || "Workshops loaded successfully!");
-      })
-      .catch((err) => {
-        toast.error("Failed to load workshops. Please try again.");
-        console.error(err);
-      })
-      .finally(() => setLoading(false));
-  }, []);
-
-  return (
-    <div className="px-4 md:px-20 py-10">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-semibold text-gray-800">Workshops</h1>
-        <p className="text-sm text-gray-500">
-          Register for any upcoming workshop you are interested in attending
-        </p>
-
-        <div className="flex justify-center gap-4 mt-6">
-          <button className="bg-green-500 text-white px-4 py-2 rounded-full font-medium">
-            Upcoming Workshops
-          </button>
-          <button className="text-gray-700 px-4 py-2 rounded-full font-medium">
-            Previous Workshops
-          </button>
-        </div>
-      </div>
-
-      {loading && <p className="text-center text-gray-500">Loading workshops...</p>}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {Array.isArray(workshops) &&
-        workshops.map((workshop) => (
-          <WorkshopCard key={workshop._id}
-            title={workshop.title}
-            date={new Date(workshop.date).toLocaleDateString()}
-            image={workshop.workshopImage || "/image 6.png"} 
-            description={workshop.description}
-            //facilitator={workshop.facilitator}
-            //location={workshop.location}
-            id={workshop._id} // Pass the workshop ID to the card
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default WorkshopsPage;
-*/
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import WorkshopCard from "../Components/WorkshopCard";
@@ -116,7 +8,8 @@ import { ToastContainer } from "react-toastify";
 import { FallingLines } from "react-loader-spinner";
 
 const WorkshopsPage = () => {
-  const currentUser = JSON.parse(localStorage.getItem("user"));
+  // Use sessionStorage instead of localStorage
+  const currentUser = JSON.parse(sessionStorage.getItem("user"));
   const currentUserId = currentUser?._id;
   //const isRegistered = workshop.attendees.includes(currentUserId);
 
@@ -130,67 +23,40 @@ const WorkshopsPage = () => {
   const [showUnregisterModal, setShowUnregisterModal] = useState(false);
   const [unregisterWorkshop, setUnregisterWorkshop] = useState(null);
 
- 
-
-  // const openModal = (workshop) => {
-  //   setSelectedWorkshop(workshop);
-  // };
-
-  // const closeModal = () => {
-  //   setSelectedWorkshop(null);
-  // };
-
   const fetchWorkshops = () => {
     setLoading(true);
     setErrorMessage(""); 
     setStatus(view === "upcoming" ? "Upcoming" : "Previous"); // Set status based on view
 
-    // const token = localStorage.getItem("token");
-    // if (!token) {
-    //   toast("Please sign in first.");
-    //   return;
-    // }
-    
     const url =
-    view === "upcoming"
-    ? "https://skillitgh-lms.onrender.com/api/v1/workshops/upcoming"
-    : "https://skillitgh-lms.onrender.com/api/v1/workshops/previous";
+      view === "upcoming"
+        ? "https://skillitgh-lms.onrender.com/api/v1/workshops/upcoming"
+        : "https://skillitgh-lms.onrender.com/api/v1/workshops/previous";
 
     axios
-    .get(url, 
-    {
-      withCredentials: true
-    })
-    .then((response) => { /*
-      setWorkshops(response.data.data);
-      console.log(response.data.data);
-      console.log(response.data);
-      toast.success(response.data.message || "Workshops loaded!");*/
-      const data = response.data.workshops;
-      if (Array.isArray(data) && data.length > 0) {
-        const enhancedData = data.map((workshop) => ({
-          ...workshop,
-          isRegistered: workshop.attendees?.includes(currentUserId),
-        }));
-        setWorkshops(enhancedData);
-        toast.success(response.data.message || "Workshops loaded!");
-      } /*else {
-        setWorkshops([]); // ✅ Clear workshops
-        setErrorMessage(response.data.message || "No workshops available.");
-      }*/
-    })
-    .catch((err) => {
-      setWorkshops([]); 
-      const backendMessage = err.response?.data?.message || "Failed to load workshops.";
-      setErrorMessage(backendMessage);
-      console.error(err);
-      /*
-      const backendMessage = err.response?.data?.message || "Failed to load workshops.";
-      setErrorMessage(backendMessage);
-      toast.error(backendMessage);
-      console.error(err);*/
-    })      
-    .finally(() => setLoading(false));
+      .get(url, 
+        {
+          withCredentials: true
+        }
+      )
+      .then((response) => {
+        const data = response.data.workshops;
+        if (Array.isArray(data) && data.length > 0) {
+          const enhancedData = data.map((workshop) => ({
+            ...workshop,
+            isRegistered: workshop.attendees?.includes(currentUserId),
+          }));
+          setWorkshops(enhancedData);
+          toast.success(response.data.message || "Workshops loaded!");
+        }
+      })
+      .catch((err) => {
+        setWorkshops([]); 
+        const backendMessage = err.response?.data?.message || "Failed to load workshops.";
+        setErrorMessage(backendMessage);
+        console.error(err);
+      })      
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -251,12 +117,6 @@ const WorkshopsPage = () => {
               price={workshop.price}
               view={view}
               isRegistered={view === "upcoming" ? workshop.isRegistered : undefined}
-              // onClick={() => {
-              //   if (view === "upcoming" && !workshop.isRegistered) {
-              //     setSelectedWorkshop(workshop);
-              //   }
-              // }}
-
               onClick={() => {
                 if (view === "upcoming") {
                   if (workshop.isRegistered) {
@@ -265,12 +125,8 @@ const WorkshopsPage = () => {
                   } else {
                     setSelectedWorkshop(workshop);
                   }
-                  
                 }
               }}
-              
-
-
             />);
           })}
         {selectedWorkshop && view === "upcoming" && (
@@ -288,7 +144,7 @@ const WorkshopsPage = () => {
                 className="w-full h-40 object-cover rounded-xl mb-4"
               />
               <p className="text-sm text-black mb-2 ">
-              {new Date(selectedWorkshop.date).toLocaleDateString()}&nbsp;<strong>&bull; {status}&nbsp;</strong><span className="ml-20"><b>Price: </b>{selectedWorkshop.price}</span>
+                {new Date(selectedWorkshop.date).toLocaleDateString()}&nbsp;<strong>&bull; {status}&nbsp;</strong><span className="ml-20"><b>Price: </b>{selectedWorkshop.price}</span>
               </p>
               <h2 className="text-xl font-semibold my-4">{selectedWorkshop.title}</h2>
               <p className="text-semibold text-gray-700 mb-4">{selectedWorkshop.description}</p>
@@ -299,17 +155,18 @@ const WorkshopsPage = () => {
               <button
                 className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
                 onClick={() => {
+                  const token = sessionStorage.getItem("token");
                   axios
                     .post(
                       `https://skillitgh-lms.onrender.com/api/v1/workshops/${selectedWorkshop._id}/register`, 
                       {}, 
                       {
-                        withCredentials: true
+                        withCredentials: true,
+                        headers: token ? { Authorization: `Bearer ${token}` } : {},
                       }
                     )
                     .then((response) => {
                       toast.success(response.data.message || "Registration successful!");
-                      console.log(workshops);
                       setWorkshops((prevWorkshops) =>
                         prevWorkshops.map((workshop) =>
                           workshop._id === selectedWorkshop._id
@@ -329,8 +186,7 @@ const WorkshopsPage = () => {
                       toast.error(backendMessage);
                       console.error(err);
                     });
-                    
-                  }}
+                }}
               >
                 Register
               </button>
