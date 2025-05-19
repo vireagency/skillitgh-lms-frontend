@@ -35,6 +35,7 @@ export function AppSidebar() {
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
+      sessionStorage.removeItem("token");
       navigate("/signin");
     }
   };
