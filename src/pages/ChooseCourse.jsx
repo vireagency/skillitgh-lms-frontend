@@ -31,7 +31,7 @@ const ChooseCourse = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token"); // Use sessionStorage
         if (!token) {
             toast("Please sign in first.");
             return;
