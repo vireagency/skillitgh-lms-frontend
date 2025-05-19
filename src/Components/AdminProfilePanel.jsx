@@ -5,18 +5,19 @@ import { toast } from "react-toastify";
 
 export function AdminProfilePanel() {
   const [admin, setAdmin] = useState(null);
- 
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    // Use sessionStorage instead of localStorage
+    const token = sessionStorage.getItem("token");
 
     axios
-    .get("https://skillitgh-lms.onrender.com/api/v1/dashboard/profile", {
-     withCredentials: true
-    })
-    .then((res) => setAdmin(res.data.user))
-    .catch((err) => console.error("Admin fetch error:", err));
-    }, []);
+      .get("https://skillitgh-lms.onrender.com/api/v1/dashboard/profile", {
+        withCredentials: true,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+      .then((res) => setAdmin(res.data.user))
+      .catch((err) => console.error("Admin fetch error:", err));
+  }, []);
 
   return (  
     <div className="bg-white p-4 rounded-xl shadow-md h-auto w-auto">
