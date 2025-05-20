@@ -165,8 +165,8 @@ const ManageContent = () => {
           payload.append("location", createData.location);
           payload.append("duration", createData.duration);
           // payload.append("resource", createData.resource);
-          payload.append("facilitatorName", createData.facilitator.name);
-          payload.append("facilitatorEmail", createData.facilitator.email);
+          payload.append("facilitatorName", createData.facilitatorName);
+          payload.append("facilitatorEmail", createData.facilitatorEmail);
           payload.append("workshopImage", createData.workshopImage);
           headers["Content-Type"] = "multipart/form-data";
         } else {
@@ -177,8 +177,8 @@ const ManageContent = () => {
             location: createData.location,
             duration: createData.duration,
             // resource: createData.resource,
-            facilitatorName: createData.facilitator.name,
-            facilitatorEmail: createData.facilitator.email,
+            facilitatorName: createData.facilitatorName,
+            facilitatorEmail: createData.facilitatorEmail,
           };
         }
       }
@@ -231,8 +231,8 @@ const ManageContent = () => {
           payload.append("location", updateData.location);
           payload.append("duration", updateData.duration);
           // payload.append("resource", updateData.resource);
-          payload.append("facilitatorName", updateData.facilitator.name);
-          payload.append("facilitatorEmail", updateData.facilitator.email);
+          payload.append("facilitatorName", updateData.facilitatorName);
+          payload.append("facilitatorEmail", updateData.facilitatorEmail);
           payload.append("workshopImage", updateData.workshopImage);
           headers["Content-Type"] = "multipart/form-data";
         } else {
@@ -243,8 +243,8 @@ const ManageContent = () => {
             location: updateData.location,
             duration: updateData.duration,
             // resource: updateData.resource,
-            facilitatorName: updateData.facilitator.name,
-            facilitatorEmail: updateData.facilitator.email,
+            facilitatorName: updateData.facilitatorName,
+            facilitatorEmail: updateData.facilitatorEmail,
           };
         }
       }
@@ -441,13 +441,13 @@ const ManageContent = () => {
         <Input
           className="mb-4"
           placeholder="Facilitator Name"
-          value={createData.facilitator.name}
+          value={createData.facilitatorName}
           onChange={(e) => setCreateData({ ...createData, facilitatorName: e.target.value })}
         />
         <Input
           className="mb-4"
           placeholder="Facilitator Email"
-          value={createData.facilitator.email}
+          value={createData.facilitatorEmail}
           onChange={(e) => setCreateData({ ...createData, facilitatorEmail: e.target.value })}
         />
         <label className="block mb-4">
@@ -550,13 +550,13 @@ const ManageContent = () => {
         <Input
           className="mb-4"
           placeholder="Facilitator Name"
-          value={updateData.facilitator.name}
+          value={updateData.facilitatorName}
           onChange={(e) => setUpdateData({ ...updateData, facilitatorName: e.target.value })}
         />
         <Input
           className="mb-4"
           placeholder="Facilitator Email"
-          value={updateData.facilitator.email}
+          value={updateData.facilitatorEmail}
           onChange={(e) => setUpdateData({ ...updateData, facilitatorEmail: e.target.value })}
         />
         <label className="block mb-4">
