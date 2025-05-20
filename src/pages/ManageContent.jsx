@@ -382,7 +382,7 @@ const ManageContent = () => {
           <input
             type="file"
             accept="image/*"
-            onChange={e => setCreateData({ ...createData, image: e.target.files[0] })}
+            onChange={e => setCreateData({ ...createData, courseImage: e.target.files[0] })}
           />
         </label>
         <div className="flex justify-end gap-2">
@@ -441,13 +441,13 @@ const ManageContent = () => {
         <Input
           className="mb-4"
           placeholder="Facilitator Name"
-          value={createData.facilitatorName}
+          value={createData.facilitator.name}
           onChange={(e) => setCreateData({ ...createData, facilitatorName: e.target.value })}
         />
         <Input
           className="mb-4"
           placeholder="Facilitator Email"
-          value={createData.facilitatorEmail}
+          value={createData.facilitator.email}
           onChange={(e) => setCreateData({ ...createData, facilitatorEmail: e.target.value })}
         />
         <label className="block mb-4">
@@ -491,7 +491,7 @@ const ManageContent = () => {
           <input
             type="file"
             accept="image/*"
-            onChange={e => setUpdateData({ ...updateData, image: e.target.files[0] })}
+            onChange={e => setUpdateData({ ...updateData, courseImage: e.target.files[0] })}
           />
         </label>
         <div className="flex justify-end gap-2">
@@ -550,13 +550,13 @@ const ManageContent = () => {
         <Input
           className="mb-4"
           placeholder="Facilitator Name"
-          value={updateData.facilitatorName}
+          value={updateData.facilitator.name}
           onChange={(e) => setUpdateData({ ...updateData, facilitatorName: e.target.value })}
         />
         <Input
           className="mb-4"
           placeholder="Facilitator Email"
-          value={updateData.facilitatorEmail}
+          value={updateData.facilitator.email}
           onChange={(e) => setUpdateData({ ...updateData, facilitatorEmail: e.target.value })}
         />
         <label className="block mb-4">
