@@ -18,6 +18,7 @@ import { AdminProfilePanel, NotificationPanel } from "@/Components/AdminProfileP
 import { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { Button } from "@/Components/ui/button";
+import { useUnreadNotificationsCount } from "@/Components/AdminProfilePanel";
 
 function AdminDashboardLayout() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ function AdminDashboardLayout() {
   const [isEditing, setIsEditing] = useState(false);
   const [adminForm, setAdminForm] = useState({});
   const [imageFile, setImageFile] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   // Refs for click outside
   const profilePanelRef = useRef(null);
@@ -135,6 +137,9 @@ function AdminDashboardLayout() {
     }
   };
 
+  // Use the hook to fetch initial count
+  const initialUnread = useUnreadNotificationsCount();
+
   return (
     <SidebarProvider>
       <AdminSidebar />
@@ -181,6 +186,11 @@ function AdminDashboardLayout() {
                 tabIndex={0}
                 onKeyDown={e => { if (e.key === "Enter") handleNotificationsClick(); }}
               />
+              {(unreadCount > 0 || initialUnread > 0) && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
+                  {unreadCount || initialUnread}
+                </span>
+              )}
               {showNotifications && (
                 <div className="absolute right-0 mt-3 w-[420px] max-w-lg bg-white shadow-2xl rounded-2xl z-50 border border-gray-100 animate-fade-in overflow-hidden">
                   <div className="p-4 border-b flex items-center justify-between bg-gray-50">
@@ -194,7 +204,7 @@ function AdminDashboardLayout() {
                     </button>
                   </div>
                   <div className="max-h-80 overflow-y-auto">
-                    <NotificationPanel />
+                    <NotificationPanel onChangeUnreadCount={setUnreadCount} />
                   </div>
                 </div>
               )}
