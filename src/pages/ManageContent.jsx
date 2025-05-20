@@ -143,11 +143,11 @@ const ManageContent = () => {
       let headers = {};
       const token = sessionStorage.getItem("token");
       if (type === "courses") {
-        if (createData.image) {
+        if (createData.courseImage) {
           payload = new FormData();
           payload.append("title", createData.title);
           payload.append("description", createData.description);
-          payload.append("image", createData.image);
+          payload.append("image", createData.courseImage);
           headers["Content-Type"] = "multipart/form-data";
         } else {
           payload = {
@@ -165,8 +165,8 @@ const ManageContent = () => {
           payload.append("location", createData.location);
           payload.append("duration", createData.duration);
           // payload.append("resource", createData.resource);
-          payload.append("facilitatorName", createData.facilitatorName);
-          payload.append("facilitatorEmail", createData.facilitatorEmail);
+          payload.append("facilitatorName", createData.facilitator.name);
+          payload.append("facilitatorEmail", createData.facilitator.email);
           payload.append("workshopImage", createData.workshopImage);
           headers["Content-Type"] = "multipart/form-data";
         } else {
@@ -177,8 +177,8 @@ const ManageContent = () => {
             location: createData.location,
             duration: createData.duration,
             // resource: createData.resource,
-            facilitatorName: createData.facilitatorName,
-            facilitatorEmail: createData.facilitatorEmail,
+            facilitatorName: createData.facilitator.name,
+            facilitatorEmail: createData.facilitator.email,
           };
         }
       }
@@ -209,11 +209,11 @@ const ManageContent = () => {
       let headers = {};
       const token = sessionStorage.getItem("token");
       if (type === "courses") {
-        if (updateData.image && updateData.image instanceof File) {
+        if (updateData.courseImage && updateData.courseImage instanceof File) {
           payload = new FormData();
           payload.append("title", updateData.title);
           payload.append("description", updateData.description);
-          payload.append("image", updateData.image);
+          payload.append("image", updateData.courseImage);
           headers["Content-Type"] = "multipart/form-data";
         } else {
           payload = {
@@ -231,8 +231,8 @@ const ManageContent = () => {
           payload.append("location", updateData.location);
           payload.append("duration", updateData.duration);
           // payload.append("resource", updateData.resource);
-          payload.append("facilitatorName", updateData.facilitatorName);
-          payload.append("facilitatorEmail", updateData.facilitatorEmail);
+          payload.append("facilitatorName", updateData.facilitator.name);
+          payload.append("facilitatorEmail", updateData.facilitator.email);
           payload.append("workshopImage", updateData.workshopImage);
           headers["Content-Type"] = "multipart/form-data";
         } else {
@@ -243,8 +243,8 @@ const ManageContent = () => {
             location: updateData.location,
             duration: updateData.duration,
             // resource: updateData.resource,
-            facilitatorName: updateData.facilitatorName,
-            facilitatorEmail: updateData.facilitatorEmail,
+            facilitatorName: updateData.facilitator.name,
+            facilitatorEmail: updateData.facilitator.email,
           };
         }
       }
