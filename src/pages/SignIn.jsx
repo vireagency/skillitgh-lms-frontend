@@ -130,7 +130,7 @@ export default function SignIn() {
                 {...register("email", { required: true })}
                 type="email"
                 placeholder="example@gmail.com"
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-emerald-500 transition"
+                className="w-full border-b border-gray-300 px-3 py-2 focus:outline-none focus:border-emerald-500 transition"
               />
               {errors.email &&
                 <span className="text-red-500 text-xs">
@@ -145,7 +145,7 @@ export default function SignIn() {
                   {...register("password", { required: true })}
                   type={showPassword ? "text" : "password"}
                   placeholder="********"
-                  className="w-full border border-gray-300 rounded px-3 py-2 pr-10 focus:outline-none focus:border-emerald-500 transition"
+                  className="w-full border-b border-gray-300 px-3 py-2 pr-10 focus:outline-none focus:border-emerald-500 transition"
                 />
                 <button
                   type="button"
