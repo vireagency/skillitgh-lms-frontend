@@ -161,7 +161,7 @@ const CalendarPanel = () => {
             {events.length > MAX_VISIBLE && (
               <button
                 onClick={() => setShowAll(prev => !prev)}
-                className="text-blue-600 text-sm underline mt-2"
+                className="text-blue-600 text-sm hover:underline mt-2"
               >
                 {showAll ? "Show Less" : "View More"}
               </button>
