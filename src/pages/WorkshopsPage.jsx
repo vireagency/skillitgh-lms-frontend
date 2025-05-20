@@ -154,7 +154,9 @@ const WorkshopsPage = () => {
                 className="w-full h-40 object-cover rounded-xl mb-4"
               />
               <p className="text-sm text-black mb-2 ">
-                {new Date(selectedWorkshop.date).toLocaleDateString()}&nbsp;<strong>&bull; {status}&nbsp;</strong><span className="ml-20"><b>Price: </b>{selectedWorkshop.price}</span>
+                {new Date(selectedWorkshop.date).toLocaleDateString()}&nbsp;
+                <strong>&bull; {status}&nbsp;</strong>
+                <span className="ml-20"><b>Price: </b>{selectedWorkshop.price}</span>
               </p>
               <h2 className="text-xl font-semibold my-4">{selectedWorkshop.title}</h2>
               <p className="text-semibold text-gray-700 mb-4">{selectedWorkshop.description}</p>
@@ -162,44 +164,46 @@ const WorkshopsPage = () => {
               <p className="text-semibold text-gray-700 mb-2"><b>Facilitator: </b>{selectedWorkshop.facilitator.name}</p>
               <p className="text-semibold text-gray-700 mb-2"><b>Email: </b>{selectedWorkshop.facilitator.email}</p>
               <p className="text-semibold text-gray-700 mb-2"><b>Location: </b>{selectedWorkshop.location}</p>
-              <button
-                className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
-                onClick={() => {
-                  const token = sessionStorage.getItem("token");
-                  axios
-                    .post(
-                      `https://skillitgh-lms.onrender.com/api/v1/workshops/${selectedWorkshop._id}/register`, 
-                      {}, 
-                      {
-                        withCredentials: true,
-                        headers: token ? { Authorization: `Bearer ${token}` } : {},
-                      }
-                    )
-                    .then((response) => {
-                      toast.success(response.data.message || "Registration successful!");
-                      setWorkshops((prevWorkshops) =>
-                        prevWorkshops.map((workshop) =>
-                          workshop._id === selectedWorkshop._id
-                            ? { ...workshop, isRegistered: true }
-                            : workshop
-                        )
-                      );                   
-
-                      setShowSuccessModal(true);
-                      setTimeout(() => {
-                        setSelectedWorkshop(null);
-                        setShowSuccessModal(false);
-                      }, 3000); 
-                    })
-                    .catch((err) => {
-                      const backendMessage = err.response?.data?.message || "Registration failed.";
-                      toast.error(backendMessage);
-                      console.error(err);
-                    });
-                }}
-              >
-                Register
-              </button>
+              {/* Show Register button only for upcoming workshops */}
+              {view === "upcoming" && (
+                <button
+                  className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
+                  onClick={() => {
+                    const token = sessionStorage.getItem("token");
+                    axios
+                      .post(
+                        `https://skillitgh-lms.onrender.com/api/v1/workshops/${selectedWorkshop._id}/register`,
+                        {},
+                        {
+                          withCredentials: true,
+                          headers: token ? { Authorization: `Bearer ${token}` } : {},
+                        }
+                      )
+                      .then((response) => {
+                        toast.success(response.data.message || "Registration successful!");
+                        setWorkshops((prevWorkshops) =>
+                          prevWorkshops.map((workshop) =>
+                            workshop._id === selectedWorkshop._id
+                              ? { ...workshop, isRegistered: true }
+                              : workshop
+                          )
+                        );
+                        setShowSuccessModal(true);
+                        setTimeout(() => {
+                          setSelectedWorkshop(null);
+                          setShowSuccessModal(false);
+                        }, 3000);
+                      })
+                      .catch((err) => {
+                        const backendMessage = err.response?.data?.message || "Registration failed.";
+                        toast.error(backendMessage);
+                        console.error(err);
+                      });
+                  }}
+                >
+                  Register
+                </button>
+              )}
             </div>
           </div>
         )}
