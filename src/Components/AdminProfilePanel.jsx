@@ -3,6 +3,34 @@ import axios from "axios";
 import { FallingLines } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
+// Export this hook to use in your layout for the bell icon
+export function useUnreadNotificationsCount() {
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const token = sessionStorage.getItem("token");
+        const res = await axios.get(
+          "https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications",
+          {
+            withCredentials: true,
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          }
+        );
+        const notifications = res.data.notifications || [];
+        const count = notifications.filter((n) => !n.isRead).length;
+        setUnreadCount(count);
+      } catch {
+        setUnreadCount(0);
+      }
+    };
+    fetchUnreadCount();
+  }, []);
+
+  return unreadCount;
+}
+
 export function AdminProfilePanel() {
   const [admin, setAdmin] = useState(null);
 
@@ -51,7 +79,7 @@ export function AdminProfilePanel() {
   );
 }
 
-export function NotificationPanel() {
+export function NotificationPanel({ onChangeUnreadCount }) {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -67,11 +95,15 @@ export function NotificationPanel() {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         }
       );
-      // Use res.data.notifications (array) from backend response
-      setNotifications(res.data.notifications || []);
-      // console.log(res.data.notifications);
+      const notifs = res.data.notifications || [];
+      setNotifications(notifs);
+      if (onChangeUnreadCount) {
+        const count = notifs.filter((n) => !n.isRead).length;
+        onChangeUnreadCount(count);
+      }
     } catch (err) {
       setNotifications([]);
+      if (onChangeUnreadCount) onChangeUnreadCount(0);
     } finally {
       setLoading(false);
     }
@@ -79,6 +111,7 @@ export function NotificationPanel() {
 
   useEffect(() => {
     fetchNotifications();
+    // eslint-disable-next-line
   }, []);
 
   // Mark as read
@@ -99,6 +132,10 @@ export function NotificationPanel() {
         )
       );
       toast.success("Notification marked as read");
+      if (onChangeUnreadCount) {
+        const count = notifications.filter((n) => n._id !== notificationId && !n.isRead).length;
+        onChangeUnreadCount(count);
+      }
     } catch {
       toast.error("Failed to mark as read");
     }
@@ -117,6 +154,10 @@ export function NotificationPanel() {
       );
       setNotifications((prev) => prev.filter((n) => n._id !== notificationId));
       toast.success("Notification deleted");
+      if (onChangeUnreadCount) {
+        const count = notifications.filter((n) => n._id !== notificationId && !n.isRead).length;
+        onChangeUnreadCount(count);
+      }
     } catch {
       toast.error("Failed to delete notification");
     }
@@ -140,7 +181,7 @@ export function NotificationPanel() {
   }
 
   return (
-    <ul className="divide-y w-96">
+    <ul className="divide-y w-[420px] max-w-full">
       {notifications.map((notif, idx) => (
         <li
           key={notif._id || idx}
