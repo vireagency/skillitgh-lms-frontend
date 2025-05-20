@@ -290,7 +290,13 @@ const ManageContent = () => {
       </thead>
       <tbody>
         {items.map((item) => {
-          let imageUrl = item.image || item.workshopImage || item.courseImage || "";
+          // Use courseImage for courses, workshopImage for workshops, fallback to image
+          let imageUrl = "";
+          if (type === "courses") {
+            imageUrl = item.courseImage || item.image || "";
+          } else {
+            imageUrl = item.workshopImage || item.image || "";
+          }
           return (
             <tr key={item.id || item._id} className="border-b">
               <td className="p-2">{item.title}</td>
