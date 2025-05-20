@@ -161,7 +161,7 @@ const ManageContent = () => {
           };
         }
       } else {
-        // Workshops logic unchanged
+        // Workshops logic with facilitator as nested object
         if (createData.workshopImage) {
           payload = new FormData();
           payload.append("title", createData.title);
@@ -169,10 +169,10 @@ const ManageContent = () => {
           payload.append("date", createData.date);
           payload.append("location", createData.location);
           payload.append("duration", createData.duration);
-          // payload.append("resource", createData.resource);
-          payload.append("facilitatorName", createData.facilitatorName);
-          payload.append("facilitatorEmail", createData.facilitatorEmail);
           payload.append("workshopImage", createData.workshopImage);
+          // Nested facilitator fields
+          payload.append("facilitator[name]", createData.facilitatorName);
+          payload.append("facilitator[email]", createData.facilitatorEmail);
           headers["Content-Type"] = "multipart/form-data";
         } else {
           payload = {
@@ -181,9 +181,10 @@ const ManageContent = () => {
             date: createData.date,
             location: createData.location,
             duration: createData.duration,
-            // resource: createData.resource,
-            facilitatorName: createData.facilitatorName,
-            facilitatorEmail: createData.facilitatorEmail,
+            facilitator: {
+              name: createData.facilitatorName,
+              email: createData.facilitatorEmail,
+            },
           };
         }
       }
@@ -232,7 +233,7 @@ const ManageContent = () => {
           };
         }
       } else {
-        // Workshops logic unchanged
+        // Workshops logic with facilitator as nested object
         if (updateData.workshopImage && updateData.workshopImage instanceof File) {
           payload = new FormData();
           payload.append("title", updateData.title);
@@ -240,10 +241,10 @@ const ManageContent = () => {
           payload.append("date", updateData.date);
           payload.append("location", updateData.location);
           payload.append("duration", updateData.duration);
-          // payload.append("resource", updateData.resource);
-          payload.append("facilitatorName", updateData.facilitatorName);
-          payload.append("facilitatorEmail", updateData.facilitatorEmail);
           payload.append("workshopImage", updateData.workshopImage);
+          // Nested facilitator fields
+          payload.append("facilitator[name]", updateData.facilitatorName);
+          payload.append("facilitator[email]", updateData.facilitatorEmail);
           headers["Content-Type"] = "multipart/form-data";
         } else {
           payload = {
@@ -252,9 +253,10 @@ const ManageContent = () => {
             date: updateData.date,
             location: updateData.location,
             duration: updateData.duration,
-            // resource: updateData.resource,
-            facilitatorName: updateData.facilitatorName,
-            facilitatorEmail: updateData.facilitatorEmail,
+            facilitator: {
+              name: updateData.facilitatorName,
+              email: updateData.facilitatorEmail,
+            },
           };
         }
       }
