@@ -137,26 +137,31 @@ const ManageContent = () => {
   // --- CREATE HANDLER ---
   const handleCreate = async () => {
     const type = tab;
-    if (!createData.title.trim()) return;
+    if (!createData.title.trim() || !createData.description.trim() || !createData.duration || !createData.price) return;
     try {
       let payload;
       let headers = {};
       const token = sessionStorage.getItem("token");
       if (type === "courses") {
+        // Only include required fields
         if (createData.courseImage) {
           payload = new FormData();
           payload.append("title", createData.title);
           payload.append("description", createData.description);
-          payload.append("image", createData.courseImage);
+          payload.append("courseImage", createData.courseImage);
+          payload.append("price", createData.price);
+          payload.append("duration", createData.duration);
           headers["Content-Type"] = "multipart/form-data";
         } else {
           payload = {
             title: createData.title,
             description: createData.description,
+            price: createData.price,
+            duration: createData.duration,
           };
         }
       } else {
-        // Workshops
+        // Workshops logic unchanged
         if (createData.workshopImage) {
           payload = new FormData();
           payload.append("title", createData.title);
@@ -209,20 +214,25 @@ const ManageContent = () => {
       let headers = {};
       const token = sessionStorage.getItem("token");
       if (type === "courses") {
+        // Only include required fields
         if (updateData.courseImage && updateData.courseImage instanceof File) {
           payload = new FormData();
           payload.append("title", updateData.title);
           payload.append("description", updateData.description);
-          payload.append("image", updateData.courseImage);
+          payload.append("courseImage", updateData.courseImage);
+          payload.append("price", updateData.price);
+          payload.append("duration", updateData.duration);
           headers["Content-Type"] = "multipart/form-data";
         } else {
           payload = {
             title: updateData.title,
             description: updateData.description,
+            price: updateData.price,
+            duration: updateData.duration,
           };
         }
       } else {
-        // Workshops
+        // Workshops logic unchanged
         if (updateData.workshopImage && updateData.workshopImage instanceof File) {
           payload = new FormData();
           payload.append("title", updateData.title);
