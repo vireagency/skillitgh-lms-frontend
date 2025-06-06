@@ -13,6 +13,10 @@ import DashboardLayout from "./routes/dashboard/_dashboardLayout";
 import CoursesDashboard from "./pages/CoursesDashboard";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import ProfilePage from "./pages/ProfilePage";
+import AdminDashboardLayout from "./routes/admin-dashboard/adminDashboardLayout";
+import AdminDashboard from "./pages/AdminDashboard";
+import ManageUsers from "./pages/ManageUsers";
+import ManageContent from "./pages/ManageContent";
 
 
 const App = () => {
@@ -20,18 +24,20 @@ const App = () => {
     <Routes>
       <Route path="/" element={<SignUp />} />
       <Route path="/signin" element={<SignIn />} />
+      <Route path="/admin-dashboard/*" element={<AdminDashboardLayout />} >
+        <Route index element={<AdminDashboard />} />
+        <Route path="users" element={<ManageUsers />} />
+        <Route path="content" element={<ManageContent />} />
+      </Route>
       
       {/* ✅ Protected Routes Start */}
       <Route
         path="/choosepath"
         element={
-          // localStorage.getItem("hasChosenPath") === 'true' ? (
-          //   <Navigate to="/dashboard/courses-dashboard" replace />
-          // ) : (
           <ProtectedRoute>
             <ChoosePath />
           </ProtectedRoute>
-          //)
+          
         }
       />
 
@@ -44,7 +50,7 @@ const App = () => {
         }
       >
         <Route path="workshops" element={<WorkshopsPage />} />
-        <Route path="courses-dashboard" element={<CoursesDashboard />} />
+        <Route index element={<CoursesDashboard />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
       {/* ✅ Protected Routes End */}

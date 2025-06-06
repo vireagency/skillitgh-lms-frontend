@@ -23,19 +23,26 @@ const SignUp = () => {
 
   const onSubmit = async (data) => {
     try {
+      const response = await axios.post(
+        "https://skillitgh-lms.onrender.com/api/v1/auth/register",
+        data,
+        { timeout: 5000 }
+      );
 
-      const response = await axios.post("https://skillitgh-lms.onrender.com/api/v1/auth/register", data, { timeout: 5000 });
-          
+      const { token, user } = response.data;
+      if (token) {
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("user", JSON.stringify(user));
+      }
+
       toast.success("Successfully registered!", {
         position: "top-right",
         autoClose: 2000,
       });
 
-      console.log("Response:", response.data);
-      console.log("formData:", data);
-
-      setTimeout(() => {navigate("/signin");}, 2500); 
-
+      setTimeout(() => {
+        navigate("/signin");
+      }, 2500);
     } catch (error) {
       const msg =
         error.response?.data?.message || "An error occurred. Try again.";
@@ -47,117 +54,153 @@ const SignUp = () => {
   };
 
   return (
-    <div className="w-screen h-screen grid grid-cols-1 md:grid-cols-2 bg-white overflow-y-auto">
-      
+    <div className="w-screen h-screen grid grid-cols-1 md:grid-cols-2 bg-white">
       {/* Left Image Side */}
-      <div className="h-2/3 w-full ">
+      <div className="hidden md:block h-full w-full">
         <img
-          src="./About1.jpg"
+          src="./image 23.png"
           alt="Sign up visual"
-          className="w-full h-full object-cover rounded-br-3xl"
+          className="w-full h-full rounded-br-3xl rounded-r-3xl object-cover"
         />
       </div>
 
       {/* Right Form Side */}
-      <div className="w-full md:w-2/3 min-h-screen md:h-full flex items-stretch justify-start p-10 bg-white">
-        <div className="w-full max-w-md ">
-          <h2 className="text-4xl font-normal font-montserrat text-gray-800 mb-8">Register</h2>
+      <div className="flex items-center justify-center bg-white">
+        <div className="w-full max-w-md px-8 py-12 shadow-lg rounded-2xl">
+          <h2 className="text-4xl font-semibold font-montserrat text-gray-800 mb-8 text-center">
+            Register
+          </h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="flex space-x-4">
               <div className="w-1/2">
-                <label className="text-sm font-medium text-gray-700">First Name</label>
+                <label className="text-sm font-medium text-gray-700">
+                  First Name
+                </label>
                 <input
                   {...register("firstName", { required: true })}
                   type="text"
                   placeholder="John"
                   className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2"
                 />
-                {errors.firstName && <span className="text-red-500 text-sm">First name is required</span>}
+                {errors.firstName && (
+                  <span className="text-red-500 text-xs">
+                    First name is required
+                  </span>
+                )}
               </div>
               <div className="w-1/2">
-                <label className="text-sm font-medium text-gray-700">Last Name</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Last Name
+                </label>
                 <input
                   {...register("lastName", { required: true })}
                   type="text"
                   placeholder="Doe"
                   className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2"
                 />
-                {errors.lastName && <span className="text-red-500 text-sm">Last name is required</span>}
+                {errors.lastName && (
+                  <span className="text-red-500 text-xs">
+                    Last name is required
+                  </span>
+                )}
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">Email Address</label>
+              <label className="text-sm font-medium text-gray-700">
+                Email Address
+              </label>
               <input
                 {...register("email", { required: true })}
                 type="email"
                 placeholder="example@gmail.com"
                 className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2"
               />
-              {errors.email && <span className="text-red-500 text-sm">Email is required</span>}
+              {errors.email && (
+                <span className="text-red-500 text-xs">
+                  Email is required
+                </span>
+              )}
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">Your Password</label>
+              <label className="text-sm font-medium text-gray-700">
+                Your Password
+              </label>
               <div className="relative">
                 <input
                   {...register("password", {
                     required: true,
                     pattern: {
-                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,}$/,
-                      message: "Password must be at least 6 characters, include upper & lower case letters, and a symbol."
-                    }
+                      value:
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,}$/,
+                      message:
+                        "Password must be at least 6 characters, include upper & lower case letters, and a symbol.",
+                    },
                   })}
-                  
-                  type={showPassword ? "text" : "password"}                  
+                  type={showPassword ? "text" : "password"}
                   placeholder="********"
                   className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2"
                 />
-
                 <button
-                    type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-2 top-5 text-sm text-gray-500 focus:outline-none"
-                  >
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-2 top-2 text-gray-500 focus:outline-none"
+                >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-              
               {errors.password && (
-                <span className="text-red-500 text-sm">
+                <span className="text-red-500 text-xs">
                   {errors.password.message || "Password is required"}
                 </span>
               )}
-
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">Confirm Password</label>
+              <label className="text-sm font-medium text-gray-700">
+                Confirm Password
+              </label>
               <div className="relative">
                 <input
-                  {...register("confirmPassword", { required: true, validate: (value) => value === password || "Paaswords do not match"})}
+                  {...register("confirmPassword", {
+                    required: true,
+                    validate: (value) =>
+                      value === password || "Passwords do not match",
+                  })}
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="********"
                   className="w-full border-b border-gray-300 focus:outline-none focus:border-emerald-500 py-2"
                 />
-
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  className="absolute right-2 top-5 text-sm text-gray-500 focus:outline-none"
+                  className="absolute right-2 top-2 text-gray-500 focus:outline-none"
                 >
-                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-
-              {errors.confirmPassword && <span className="text-red-500 text-sm">Please confirm your password</span>}
+              {errors.confirmPassword && (
+                <span className="text-red-500 text-xs">
+                  {errors.confirmPassword.message ||
+                    "Please confirm your password"}
+                </span>
+              )}
             </div>
 
             <div className="flex items-center space-x-2 text-sm">
-              <input type="checkbox" className="form-checkbox text-emerald-500" required />
+              <input
+                type="checkbox"
+                className="form-checkbox text-emerald-500"
+                required
+              />
               <span>
-                I agree to the <a href="#" className="text-blue-600 underline">Terms & Conditions</a> of SkillitGh
+                I agree to the{" "}
+                <a href="#" className="text-blue-600 underline">
+                  Terms & Conditions
+                </a>{" "}
+                of SkillitGh
               </span>
             </div>
 
@@ -172,7 +215,9 @@ const SignUp = () => {
 
           <p className="text-sm text-center mt-6">
             Already have an account?
-            <Link to="/signin" className="text-blue-600 ml-1 underline">Sign In</Link>
+            <Link to="/signin" className="text-blue-600 ml-1 underline">
+              Sign In
+            </Link>
           </p>
         </div>
       </div>

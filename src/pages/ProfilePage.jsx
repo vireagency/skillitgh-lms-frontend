@@ -4,49 +4,86 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "../index.css";
 import { FallingLines } from 'react-loader-spinner';
+import { Pen } from 'lucide-react';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState(null);
   const [formData, setFormData] = useState({});
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-        const response = await axios.get('https://skillitgh-lms.onrender.com/api/v1/dashboard/profile');
+      try {
+        const token = sessionStorage.getItem("token");
+        const response = await axios.get(
+          'https://skillitgh-lms.onrender.com/api/v1/dashboard/profile',
+          {
+            withCredentials: true,
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          }
+        );
         const data = response.data.user;
-      setProfile(data);
-      setFormData(data);
+        setProfile(data);
+        setFormData(data);
+        console.log('Fetched profile:', data);
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+      }
     };
 
     fetchProfile();
   }, []);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-    axios.put('https://skillitgh-lms.onrender.com/api/v1/dashboard/profile', formData)
-      .then((response) => {
-        console.log('Profile updated:', response.data);
-        setProfile(response.data.profile);
-        setIsEditing(false);
-      })
-      .catch((error) => {
-        const msg = error.response?.data?.message || "An error occurred. Try again.";
-        toast.error(msg, {
-            position: "top-right",
-            autoClose: 2500,
-        });
-        console.error('Error updating profile:', error);
+  const handleSave = async () => {
+    try {
+      const formDataToSend = new FormData();
+
+      // Append form data
+      formDataToSend.append("firstName", formData.firstName);
+      formDataToSend.append("lastName", formData.lastName);
+      formDataToSend.append("phoneNumber", formData.phoneNumber);
+      formDataToSend.append("gender", formData.gender);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("location", formData.location);
+
+      // Append image file if selected
+      if (imageFile) {
+        formDataToSend.append("userImage", imageFile);
+      }
+
+      const token = sessionStorage.getItem("token");
+      const response = await axios.put(
+        "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile",
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          withCredentials: true,
+        }
+      );
+
+      setProfile(response.data.user);
+      toast.success("Profile updated successfully!");
+      setIsEditing(false);
+    } catch (error) {
+      const msg = error.response?.data?.message || "An error occurred. Try again.";
+      toast.error(msg, {
+        position: "top-right",
+        autoClose: 2500,
       });
-    setProfile(formData);
-    setIsEditing(false);
-    console.log('Saved profile:', formData);
+      console.error("Error updating profile:", error);
+    }
   };
+
 
   if (!profile) return <div className='flex justify-center items-center'><FallingLines
     color="#4fa94d"
@@ -59,18 +96,43 @@ const ProfilePage = () => {
     <div className="p-10">
       <div className="flex justify-center items-center mb-6">
         <div className="flex flex-col items-center justify-center">
-          <h1 className="text-3xl font-bold font-[Playfair] text-[#3E584C] text-center md:text-left">Profile</h1>
+          <h1 className="text-3xl font-bold font-montserrat text-[#3E584C] text-center md:text-left">Profile</h1>
           <p className="text-sm text-gray-500">Manage your profile information</p>
         </div>
         
       </div>
       <div className="flex items-center justify-between space-x-4 mb-6">
-        <div className='flex'>
-          <img src={profile.userImage} alt="avatar" className="w-16 h-16 rounded-full" />
-          <span>
+        <div className="flex items-center space-x-4">
+          <div className="relative w-16 h-16">
+            <img
+              src={imageFile ? URL.createObjectURL(imageFile) : profile.userImage}
+              alt="avatar"
+              className="w-16 h-16 rounded-full object-cover border"
+            />
+
+            {isEditing && (
+              <>
+                <label
+                  htmlFor="profileImageInput"
+                  className="absolute bottom-0 right-0 p-1 rounded-full cursor-pointer hover:bg-green-700"
+                >
+                  <Pen className="text-white text-xs" />
+                </label>
+                <input
+                  id="profileImageInput"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setImageFile(e.target.files[0])}
+                  className="hidden"
+                />
+              </>
+            )}
+          </div>
+
+          <div>
             <h2 className="text-lg font-semibold">{profile.firstName}</h2>
             <p className="text-sm text-gray-500">{profile.email}</p>
-          </span>
+          </div>
         </div>
         {!isEditing && (
           <button
@@ -95,13 +157,13 @@ const ProfilePage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium">Phone</label>
-              <input name="phone" type="text" value={formData.phone} onChange={handleChange} className="w-full p-2 border rounded" />
+              <input name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} className="w-full p-2 border rounded" placeholder='Enter your active phone number'/>
             </div>
             <div>
               <label className="block text-sm font-medium">Gender</label>
               <select name="gender" value={formData.gender} onChange={handleChange} className="w-full p-2 border rounded">
-                <option>Male</option>
-                <option>Female</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
               </select>
             </div>
             <div>
@@ -110,7 +172,7 @@ const ProfilePage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium">Location</label>
-              <input name="location" type="text" value={formData.location} onChange={handleChange} className="w-full p-2 border rounded" />
+              <input name="location" type="text" value={formData.location} onChange={handleChange} className="w-full p-2 border rounded" placeholder='Enter your current location' />
             </div>
           
           </div>
@@ -124,47 +186,11 @@ const ProfilePage = () => {
           <div className="grid grid-cols-2 gap-4 mt-6">
             <p><strong>First Name:</strong> {profile.firstName}</p>
             <p><strong>Last Name:</strong> {profile.lastName}</p>
-            <p><strong>Phone:</strong> {profile.phone}</p>
+            <p><strong>Phone:</strong> {profile.phoneNumber}</p>
             <p><strong>Gender:</strong> {profile.gender}</p>
             <p><strong>Email:</strong> {profile.email}</p>
             <p><strong>Location:</strong> {profile.location}</p>            
           </div>
-          {/* <div className="flex space-x-10 mt-10">
-            <div className="text-center">
-              <div className="relative w-24 h-24 mx-auto">
-                <svg className="w-full h-full" viewBox="0 0 36 36">
-                  <path
-                    className="text-purple-500 stroke-current"
-                    strokeWidth="3"
-                    fill="none"
-                    strokeDasharray={`${profile.attendanceRate}, 100`}
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center text-xl font-semibold">
-                  {profile.attendanceRate}%
-                </div>
-              </div>
-              <p className="mt-2">Attendance Rate</p>
-            </div>
-            <div className="text-center">
-              <div className="relative w-24 h-24 mx-auto">
-                <svg className="w-full h-full" viewBox="0 0 36 36">
-                  <path
-                    className="text-red-400 stroke-current"
-                    strokeWidth="3"
-                    fill="none"
-                    strokeDasharray={`${profile.completionRate}, 100`}
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center text-xl font-semibold">
-                  {profile.completionRate}%
-                </div>
-              </div>
-              <p className="mt-2">Completion Rate</p>
-            </div>
-          </div> */}
         </>
       )}
     </div>

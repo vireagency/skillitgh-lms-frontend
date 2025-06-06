@@ -17,11 +17,11 @@ function DashboardLayout() {
           <Breadcrumb >
             <BreadcrumbList className="flex items-center space-x-2">
               <BreadcrumbItem>
-                <BreadcrumbLink className="cursor-pointer" onClick={() => navigate("/dashboard/workshops")}>workshops</BreadcrumbLink>
+                <BreadcrumbLink className="cursor-pointer" onClick={() => navigate("/dashboard")}>Courses</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink className="cursor-pointer" onClick={() => navigate("/dashboard/courses-dashboard")}>Courses</BreadcrumbLink>
+                <BreadcrumbLink className="cursor-pointer" onClick={() => navigate("/dashboard/workshops")}>Workshops</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>

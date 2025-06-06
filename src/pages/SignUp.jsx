@@ -10,25 +10,28 @@ const SignUp = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting }
   } = useForm();
 
   const navigate = useNavigate();
+  const password = watch("password");
 
   const onSubmit = async (data) => {
     try {
       const response = await axios.post("https://skillitgh-lms.onrender.com/api/v1/auth/register", data, { timeout: 5000 });
-      console.log("Response:", response.data);
-      console.log("formData:", data);
+      const { token, user } = response.data;
+      if (token) {
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("user", JSON.stringify(user));
+      }
       navigate("/choosepath");
-      
       toast.success("Successfully registered!", {
         position: "top-right",
         autoClose: 10000,
       });
-
     } catch (error) {
-     const msg =
+      const msg =
         error.response?.data?.message || "An error occurred. Try again.";
       toast.error(msg, {
         position: "top-right",
@@ -36,8 +39,6 @@ const SignUp = () => {
       });
     }
   };
-
-
 
   return (
     <div className="w-screen h-screen grid grid-cols-1 md:grid-cols-2 bg-white ">
