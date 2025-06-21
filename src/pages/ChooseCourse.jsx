@@ -15,7 +15,7 @@ const ChooseCourse = () => {
     /*
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('https://skillitgh-lms.onrender.com/api/v1/courses/register', {
+        axios.post('https://skillitgh-lms-backend.onrender.com/api/v1/courses/register', {
             course: selectedCourse,
             reason: reason
         })
@@ -39,7 +39,7 @@ const ChooseCourse = () => {
     
         try {
             const response = await axios.post(
-                'https://skillitgh-lms.onrender.com/api/v1/courses/register',
+                'https://skillitgh-lms-backend.onrender.com/api/v1/courses/register',
                 {
                     courseTitle: selectedCourse,
                     messageBody: reason

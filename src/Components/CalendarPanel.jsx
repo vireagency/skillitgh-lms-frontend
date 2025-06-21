@@ -81,7 +81,7 @@ const CalendarPanel = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get("https://skillitgh-lms.onrender.com/api/v1/workshops/upcoming",
+        const res = await axios.get("https://skillitgh-lms-backend.onrender.com/api/v1/workshops/upcoming",
           {
             withCredentials: true
           }

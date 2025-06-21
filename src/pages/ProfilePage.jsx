@@ -17,7 +17,7 @@ const ProfilePage = () => {
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(
-          'https://skillitgh-lms.onrender.com/api/v1/dashboard/profile',
+          'https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/profile',
           {
             withCredentials: true,
             headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -60,7 +60,7 @@ const ProfilePage = () => {
 
       const token = sessionStorage.getItem("token");
       const response = await axios.put(
-        "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile",
+        "https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/profile",
         formDataToSend,
         {
           headers: {

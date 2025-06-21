@@ -39,7 +39,7 @@ function AdminDashboardLayout() {
   const fetchProfile = useCallback(async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const res = await axios.get("https://skillitgh-lms.onrender.com/api/v1/dashboard/profile", {
+      const res = await axios.get("https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/profile", {
         withCredentials: true,
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
@@ -120,7 +120,7 @@ function AdminDashboardLayout() {
         formDataToSend.append("userImage", imageFile);
       }
       const response = await axios.put(
-        "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile",
+        "https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/profile",
         formDataToSend,
         {
           headers: {

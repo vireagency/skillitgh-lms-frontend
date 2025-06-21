@@ -21,7 +21,7 @@ export default ProtectedRoute;
 //     const checkAuth = async () => {
 //       try {
 //         const res = await axios.get(
-//           "https://skillitgh-lms.onrender.com/api/v1/auth/check-session",
+//           "https://skillitgh-lms-backend.onrender.com/api/v1/auth/check-session",
 //           {
 //             withCredentials: true,
 //           }

@@ -1,6 +1,6 @@
 import RegisteredCoursesCard from '../Components/RegisteredCoursesCard';
 import RegisteredWorkshopsCard from '../Components/RegisteredWorkshopsCard';
-import WorkshopAttendanceGraph from '../Components/WorkshopAttendanceGraph';
+//import WorkshopAttendanceGraph from '../Components/WorkshopAttendanceGraph';
 import CalendarPanel from '../Components/CalendarPanel'; 
 
 export default function AdminDashboard() {

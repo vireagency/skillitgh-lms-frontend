@@ -29,7 +29,7 @@ export function AppSidebar() {
     setShowModal(false);
     try {
       await axios.post(
-        "https://skillitgh-lms.onrender.com/api/v1/auth/signout",
+        "https://skillitgh-lms-backend.onrender.com/api/v1/auth/signout",
         { withCredentials: true }
       );
     } catch (err) {

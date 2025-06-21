@@ -6,7 +6,7 @@ import { Input } from "@/Components/ui/input";
 import axios from "axios";
 import Textarea from "@/Components/ui/textarea";
 
-const API_BASE = "https://skillitgh-lms.onrender.com/api/v1";
+const API_BASE = "https://skillitgh-lms-backend.onrender.com/api/v1";
 
 const initialFormState = {
   title: "",
@@ -434,7 +434,7 @@ const ManageContent = () => {
           <Button variant="outline" onClick={() => { setShowCreateModal(false); setCreateData(initialFormState); }}>
             Cancel
           </Button>
-          <Button onClick={handleCreate}>Create</Button>
+          <Button variant="default" onClick={handleCreate}>Create</Button>
         </div>
       </div>
     </div>

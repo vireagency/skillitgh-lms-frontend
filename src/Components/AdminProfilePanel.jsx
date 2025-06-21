@@ -12,7 +12,7 @@ export function useUnreadNotificationsCount() {
       try {
         const token = sessionStorage.getItem("token");
         const res = await axios.get(
-          "https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications",
+          "https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/notifications",
           {
             withCredentials: true,
             headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -39,7 +39,7 @@ export function AdminProfilePanel() {
     const token = sessionStorage.getItem("token");
 
     axios
-      .get("https://skillitgh-lms.onrender.com/api/v1/dashboard/profile", {
+      .get("https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/profile", {
         withCredentials: true,
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       })
@@ -89,7 +89,7 @@ export function NotificationPanel({ onChangeUnreadCount }) {
     try {
       const token = sessionStorage.getItem("token");
       const res = await axios.get(
-        "https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications",
+        "https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/notifications",
         {
           withCredentials: true,
           headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -119,7 +119,7 @@ export function NotificationPanel({ onChangeUnreadCount }) {
     try {
       const token = sessionStorage.getItem("token");
       await axios.put(
-        `https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications/${notificationId}`,
+        `https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/notifications/${notificationId}`,
         {},
         {
           withCredentials: true,
@@ -146,7 +146,7 @@ export function NotificationPanel({ onChangeUnreadCount }) {
     try {
       const token = sessionStorage.getItem("token");
       await axios.delete(
-        `https://skillitgh-lms.onrender.com/api/v1/dashboard/notifications/${notificationId}`,
+        `https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/notifications/${notificationId}`,
         {
           withCredentials: true,
           headers: token ? { Authorization: `Bearer ${token}` } : {},

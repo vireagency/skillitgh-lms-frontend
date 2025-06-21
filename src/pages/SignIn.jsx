@@ -22,7 +22,7 @@ export default function SignIn() {
     setErrorMessage("");
     try {
       const res = await axios.post(
-        "https://skillitgh-lms.onrender.com/api/v1/auth/signin",
+        "https://skillitgh-lms-backend.onrender.com/api/v1/auth/signin",
         data,
         {
           withCredentials: true,
@@ -67,7 +67,7 @@ export default function SignIn() {
     //   setErrorMessage("");
     //   try {
     //     const res = await axios.post(
-    //       "https://skillitgh-lms.onrender.com/api/v1/auth/signin",
+    //       "https://skillitgh-lms-backend.onrender.com/api/v1/auth/signin",
     //       data,
     //       { timeout: 5000 }
     //     );
