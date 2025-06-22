@@ -26,7 +26,7 @@ export default function RegisteredCoursesCard() {
         // Use sessionStorage for token if needed
         const token = sessionStorage.getItem("token");
         const res = await axios.get(
-          "https://skillitgh-lms.onrender.com/api/v1/dashboard/students",
+          "https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/students",
           {
             withCredentials: true,
             headers: token ? { Authorization: `Bearer ${token}` } : {},

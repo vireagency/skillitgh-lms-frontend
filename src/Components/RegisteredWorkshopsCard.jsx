@@ -25,7 +25,7 @@ export default function RegisteredWorkshopsCard() {
       try {
         const token = sessionStorage.getItem("token");
         const res = await axios.get(
-          "https://skillitgh-lms.onrender.com/api/v1/workshops/registeredWorkshops",
+          "https://skillitgh-lms-backend.onrender.com/api/v1/workshops/registeredWorkshops",
           {
             withCredentials: true,
             headers: token ? { Authorization: `Bearer ${token}` } : {},

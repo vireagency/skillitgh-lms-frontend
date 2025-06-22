@@ -36,8 +36,8 @@ const CoursesDashboard = () => {
     
     const url =
       view === "enrolled"
-        ? "https://skillitgh-lms.onrender.com/api/v1/dashboard/registeredCourses"
-        : "https://skillitgh-lms.onrender.com/api/v1/dashboard/otherCourses";
+        ? "https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/registeredCourses"
+        : "https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/otherCourses";
 
     axios
       .get(url, {
@@ -157,7 +157,7 @@ const CoursesDashboard = () => {
                   const token = sessionStorage.getItem("token"); // Use sessionStorage
                   axios
                     .post(
-                      `https://skillitgh-lms.onrender.com/api/v1/dashboard/${selectedCourse._id}/register`, 
+                      `https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/${selectedCourse._id}/register`, 
                       {}, 
                       {
                         withCredentials: true,

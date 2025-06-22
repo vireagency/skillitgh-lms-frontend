@@ -33,8 +33,8 @@ const WorkshopsPage = () => {
 
     const url =
       view === "upcoming"
-        ? `https://skillitgh-lms.onrender.com/api/v1/workshops/upcoming?page=${page}`
-        : `https://skillitgh-lms.onrender.com/api/v1/workshops/previous?page=${page}`;
+        ? `https://skillitgh-lms-backend.onrender.com/api/v1/workshops/upcoming?page=${page}`
+        : `https://skillitgh-lms-backend.onrender.com/api/v1/workshops/previous?page=${page}`;
 
     axios
       .get(url, 
@@ -172,7 +172,7 @@ const WorkshopsPage = () => {
                     const token = sessionStorage.getItem("token");
                     axios
                       .post(
-                        `https://skillitgh-lms.onrender.com/api/v1/workshops/${selectedWorkshop._id}/register`,
+                        `https://skillitgh-lms-backend.onrender.com/api/v1/workshops/${selectedWorkshop._id}/register`,
                         {},
                         {
                           withCredentials: true,
@@ -253,7 +253,7 @@ const WorkshopsPage = () => {
                   onClick={() => {
                     axios
                       .post(
-                        `https://skillitgh-lms.onrender.com/api/v1/workshops/${unregisterWorkshop._id}/unregister`,
+                        `https://skillitgh-lms-backend.onrender.com/api/v1/workshops/${unregisterWorkshop._id}/unregister`,
                         {},
                         {
                           withCredentials: true

@@ -24,7 +24,7 @@ const SignUp = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "https://skillitgh-lms.onrender.com/api/v1/auth/register",
+        "https://skillitgh-lms-backend.onrender.com/api/v1/auth/register",
         data,
         { timeout: 5000 }
       );

@@ -6,18 +6,19 @@ import { Input } from "@/Components/ui/input";
 import axios from "axios";
 import Textarea from "@/Components/ui/textarea";
 
-const API_BASE = "https://skillitgh-lms.onrender.com/api/v1";
+const API_BASE = "https://skillitgh-lms-backend.onrender.com/api/v1";
 
 const initialFormState = {
   title: "",
   description: "",
+  courseImage: null,
+  price: "",
+  duration: "",
   workshopImage: null,
   date: "",
   location: "",
   facilitatorName: "",
   facilitatorEmail: "",
-  duration: "",
-  // resource: "",
 };
 
 const ManageContent = () => {
@@ -92,13 +93,14 @@ const ManageContent = () => {
     setUpdateData({
       title: item.title || "",
       description: item.description || "",
+      courseImage: item.courseImage || null,
+      price: item.price || "",
+      duration: item.duration || "",
       workshopImage: item.workshopImage || null,
       date: item.date ? item.date.slice(0, 10) : "",
       location: item.location || "",
       facilitatorName: item.facilitator?.name || "",
       facilitatorEmail: item.facilitator?.email || "",
-      duration: item.duration || "",
-      // resource: item.resource || "",
     });
     setShowUpdateModal(true);
   };
@@ -134,6 +136,21 @@ const ManageContent = () => {
     }
   };
 
+  // Utility to remove empty/undefined fields from an object (shallow)
+  function cleanObject(obj) {
+    const cleaned = {};
+    Object.entries(obj).forEach(([key, value]) => {
+      if (
+        value !== undefined &&
+        value !== null &&
+        (typeof value !== "string" || value.trim() !== "")
+      ) {
+        cleaned[key] = value;
+      }
+    });
+    return cleaned;
+  }
+
   // --- CREATE HANDLER ---
   const handleCreate = async () => {
     const type = tab;
@@ -143,8 +160,8 @@ const ManageContent = () => {
       let headers = {};
       const token = sessionStorage.getItem("token");
       if (type === "courses") {
-        // Only include required fields
-        if (createData.courseImage) {
+        // Only required fields for course
+        if (createData.courseImage && createData.courseImage instanceof File) {
           payload = new FormData();
           payload.append("title", createData.title);
           payload.append("description", createData.description);
@@ -153,12 +170,12 @@ const ManageContent = () => {
           payload.append("duration", createData.duration);
           headers["Content-Type"] = "multipart/form-data";
         } else {
-          payload = {
+          payload = cleanObject({
             title: createData.title,
             description: createData.description,
             price: createData.price,
             duration: createData.duration,
-          };
+          });
         }
       } else {
         // Workshops logic with facilitator as nested object
@@ -170,28 +187,33 @@ const ManageContent = () => {
           payload.append("location", createData.location);
           payload.append("duration", createData.duration);
           payload.append("workshopImage", createData.workshopImage);
-          // Nested facilitator fields
           payload.append("facilitator[name]", createData.facilitatorName);
           payload.append("facilitator[email]", createData.facilitatorEmail);
           headers["Content-Type"] = "multipart/form-data";
         } else {
-          payload = {
+          payload = cleanObject({
             title: createData.title,
             description: createData.description,
             date: createData.date,
             location: createData.location,
             duration: createData.duration,
-            facilitator: {
+            facilitator: cleanObject({
               name: createData.facilitatorName,
               email: createData.facilitatorEmail,
-            },
-          };
+            }),
+          });
         }
       }
       const res = await axios.post(
         `${API_BASE}/${type}`,
         payload,
-        { withCredentials: true, headers: { ...headers, ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
+        {
+          withCredentials: true,
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            ...headers,
+          },
+        }
       );
       if (type === "courses") {
         setCourses((prev) => [...prev, res.data.course || res.data.courses?.[0]]);
@@ -201,6 +223,10 @@ const ManageContent = () => {
       setShowCreateModal(false);
       setCreateData(initialFormState);
     } catch (err) {
+      // Log the error response for debugging
+      if (err.response) {
+        console.error("Backend error:", err.response.data);
+      }
       console.error(`Failed to create ${type.slice(0, -1)}:`, err);
     }
   };
@@ -215,7 +241,6 @@ const ManageContent = () => {
       let headers = {};
       const token = sessionStorage.getItem("token");
       if (type === "courses") {
-        // Only include required fields
         if (updateData.courseImage && updateData.courseImage instanceof File) {
           payload = new FormData();
           payload.append("title", updateData.title);
@@ -225,15 +250,14 @@ const ManageContent = () => {
           payload.append("duration", updateData.duration);
           headers["Content-Type"] = "multipart/form-data";
         } else {
-          payload = {
+          payload = cleanObject({
             title: updateData.title,
             description: updateData.description,
             price: updateData.price,
             duration: updateData.duration,
-          };
+          });
         }
       } else {
-        // Workshops logic with facilitator as nested object
         if (updateData.workshopImage && updateData.workshopImage instanceof File) {
           payload = new FormData();
           payload.append("title", updateData.title);
@@ -242,22 +266,21 @@ const ManageContent = () => {
           payload.append("location", updateData.location);
           payload.append("duration", updateData.duration);
           payload.append("workshopImage", updateData.workshopImage);
-          // Nested facilitator fields
           payload.append("facilitator[name]", updateData.facilitatorName);
           payload.append("facilitator[email]", updateData.facilitatorEmail);
           headers["Content-Type"] = "multipart/form-data";
         } else {
-          payload = {
+          payload = cleanObject({
             title: updateData.title,
             description: updateData.description,
             date: updateData.date,
             location: updateData.location,
             duration: updateData.duration,
-            facilitator: {
+            facilitator: cleanObject({
               name: updateData.facilitatorName,
               email: updateData.facilitatorEmail,
-            },
-          };
+            }),
+          });
         }
       }
       const res = await axios.put(
@@ -302,7 +325,6 @@ const ManageContent = () => {
       </thead>
       <tbody>
         {items.map((item) => {
-          // Use courseImage for courses, workshopImage for workshops, fallback to image
           let imageUrl = "";
           if (type === "courses") {
             imageUrl = item.courseImage || item.image || "";
@@ -371,7 +393,6 @@ const ManageContent = () => {
 
   // --- MODALS ---
 
-  // Course Create Modal
   const CourseCreateModal = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
@@ -389,6 +410,18 @@ const ManageContent = () => {
           onChange={(e) => setCreateData({ ...createData, description: e.target.value })}
           rows={3}
         />
+        <Input
+          className="mb-4"
+          placeholder="Price"
+          value={createData.price}
+          onChange={(e) => setCreateData({ ...createData, price: e.target.value })}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Duration"
+          value={createData.duration}
+          onChange={(e) => setCreateData({ ...createData, duration: e.target.value })}
+        />
         <label className="block mb-4">
           <span className="block mb-1 text-sm font-medium">Image</span>
           <input
@@ -401,13 +434,12 @@ const ManageContent = () => {
           <Button variant="outline" onClick={() => { setShowCreateModal(false); setCreateData(initialFormState); }}>
             Cancel
           </Button>
-          <Button onClick={handleCreate}>Create</Button>
+          <Button variant="default" onClick={handleCreate}>Create</Button>
         </div>
       </div>
     </div>
   );
 
-  // Workshop Create Modal
   const WorkshopCreateModal = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
@@ -444,12 +476,6 @@ const ManageContent = () => {
           value={createData.duration}
           onChange={(e) => setCreateData({ ...createData, duration: e.target.value })}
         />
-        {/* <Input
-          className="mb-4"
-          placeholder="Resource Link"
-          value={createData.resource}
-          onChange={(e) => setCreateData({ ...createData, resource: e.target.value })}
-        /> */}
         <Input
           className="mb-4"
           placeholder="Facilitator Name"
@@ -480,7 +506,6 @@ const ManageContent = () => {
     </div>
   );
 
-  // Course Update Modal
   const CourseUpdateModal = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
@@ -497,6 +522,18 @@ const ManageContent = () => {
           value={updateData.description}
           onChange={(e) => setUpdateData({ ...updateData, description: e.target.value })}
           rows={3}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Price"
+          value={updateData.price}
+          onChange={(e) => setUpdateData({ ...updateData, price: e.target.value })}
+        />
+        <Input
+          className="mb-4"
+          placeholder="Duration"
+          value={updateData.duration}
+          onChange={(e) => setUpdateData({ ...updateData, duration: e.target.value })}
         />
         <label className="block mb-4">
           <span className="block mb-1 text-sm font-medium">Image</span>
@@ -516,7 +553,6 @@ const ManageContent = () => {
     </div>
   );
 
-  // Workshop Update Modal
   const WorkshopUpdateModal = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
@@ -553,12 +589,6 @@ const ManageContent = () => {
           value={updateData.duration}
           onChange={(e) => setUpdateData({ ...updateData, duration: e.target.value })}
         />
-        {/* <Input
-          className="mb-4"
-          placeholder="Resource Link"
-          value={updateData.resource}
-          onChange={(e) => setUpdateData({ ...updateData, resource: e.target.value })}
-        /> */}
         <Input
           className="mb-4"
           placeholder="Facilitator Name"
@@ -589,7 +619,6 @@ const ManageContent = () => {
     </div>
   );
 
-  // Previous Workshop Details Modal
   const PreviousWorkshopDetailsModal = detailsWorkshop && (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg relative">
@@ -621,21 +650,6 @@ const ManageContent = () => {
         <div className="mb-2">
           <strong>Duration:</strong> {detailsWorkshop.duration || "N/A"}
         </div>
-        {/* <div className="mb-2">
-          <strong>Resource:</strong>{" "}
-          {detailsWorkshop.resource ? (
-            <a
-              href={detailsWorkshop.resource}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-green-600 underline"
-            >
-              View Resource
-            </a>
-          ) : (
-            "N/A"
-          )}
-        </div> */}
         <div className="mb-2">
           <strong>Facilitator:</strong>{" "}
           {detailsWorkshop.facilitator?.name || detailsWorkshop.facilitatorName || "N/A"}

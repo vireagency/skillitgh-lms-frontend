@@ -4,8 +4,8 @@ import axios from "axios";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 
-const API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/users";
-// const PROFILE_API = "https://skillitgh-lms.onrender.com/api/v1/dashboard/profile";
+const API = "https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/users";
+// const PROFILE_API = "https://skillitgh-lms-backend.onrender.com/api/v1/dashboard/profile";
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
